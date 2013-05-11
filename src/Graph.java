@@ -128,7 +128,25 @@ public class Graph {
 		return this.graphName;
 	}
 
+	/**
+	 * Get one of the fields stored in the SVG. These are all numeric 
+	 * properties of the layout
+	 * 
+	 * @param s The String used to reference the property
+	 * @return The value of the specified property
+	 */
 	public Number getProperty(String s){
 		return settings.get(s);
+	}
+	
+	/**
+	 * Get the coordinates of a given node
+	 * 
+	 * @param n The node index to get the coordinates for
+	 * @return The x,y coordinates of the node in the layout
+	 * 
+	 */
+	public Point getNode(int n){
+		return nodes[n];
 	}
 }
