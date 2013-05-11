@@ -143,6 +143,11 @@ public interface Analysis {
 					if(f2.type == f1.type){
 						//These can be mirrored (since they are the same thing)
 						double thetaij = f1.angleTo(f2);
+						//FIXME This may be broken as an edge rotated 180 degrees is
+						// the same as the original. This can be fixed (kinda)
+						//by making the orientation more meaning full (like 
+						// degree of the two different connected nodes.
+						//But  maybe just need to fix the calculation so it works?
 						double phi = 1 - Math.cos(f1.theta + f2.theta - 2 * thetaij);
 						double s = scaleFactor(f1,f2);
 						double d = distanceFactor(f1,f2);
