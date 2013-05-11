@@ -1,0 +1,13 @@
+bin/
+.project
+.classpath
+.directory
+.settings/
+*.swp
+*~
+*#
+*.class
+.RData
+.Rhistory
+*.old
+*.dot
