@@ -56,7 +56,7 @@ public class Graph {
 
 		//Read all the fields
 		String label = scan.next();
-		while(!label.equals("--")){
+		while(!label.equals("-")){
 			label = label.substring(0,label.length()-1); //Trim off :
 			if(scan.hasNextLong()){
 				settings.put(label, scan.nextLong());
@@ -129,22 +129,22 @@ public class Graph {
 	}
 
 	/**
-	 * Get one of the fields stored in the SVG. These are all numeric 
+	 * Get one of the fields stored in the SVG. These are all numeric
 	 * properties of the layout
-	 * 
+	 *
 	 * @param s The String used to reference the property
 	 * @return The value of the specified property
 	 */
 	public Number getProperty(String s){
 		return settings.get(s);
 	}
-	
+
 	/**
 	 * Get the coordinates of a given node
-	 * 
+	 *
 	 * @param n The node index to get the coordinates for
 	 * @return The x,y coordinates of the node in the layout
-	 * 
+	 *
 	 */
 	public Point getNode(int n){
 		return nodes[n];
