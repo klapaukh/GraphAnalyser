@@ -45,6 +45,7 @@ public class GraphAnalyser {
 		tests.add(new Analysis.LayoutProperty(Analysis.KG));
 		tests.add(new Analysis.LayoutProperty(Analysis.WELLMASS));
 		tests.add(new Analysis.LayoutProperty(Analysis.EDGECHARGE));
+		tests.add(new Analysis.MirrorSymmetry(0.1, 10, 2, false));
 
 		List<Graph> graphs = new ArrayList<>();
 		try {
