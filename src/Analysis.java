@@ -100,25 +100,27 @@ public interface Analysis {
 			return g.getProperty(name).toString();
 		}
 	}
-	
-	public class Symmetry{
+
+	public class MirrorSymmetry implements Analysis{
 		private final double sigma_scale;
 		private final boolean distanceBound;
 		private final double sigma_distance;
-		
-		public Symmetry(double sigma_scale, double sigma_distance, boolean useDistanceWeighting){
+		private final double sigma_gauss;
+
+		public MirrorSymmetry(double sigma_scale, double sigma_distance, double sigma_gauss, boolean useDistanceWeighting){
 			this.sigma_scale = sigma_scale;
 			this.distanceBound = useDistanceWeighting;
 			this.sigma_distance = sigma_distance;
+			this.sigma_gauss = sigma_gauss;
 		}
-		
+
 		public String toString(){
-			return "Symmetry";
+			return "Mirror Symmetry";
 		}
-		
+
 		public String value(Graph g){
 			List<SIFTFeature> edges = new ArrayList<>();
-			
+
 			//Make all the edges into features
 			//Each feature is the center of the edge
 			for(int i= 0 ; i < g.numNodes(); i++){
@@ -134,36 +136,79 @@ public interface Analysis {
 					}
 				}
 			}
-			
+
 			//Now that we have the features, we need to find axes
+			List<Vote> votes = new ArrayList<>();
 			for(int i = 0; i < edges.size(); i++){
 				SIFTFeature f1 = edges.get(i);
 				for(int j = i +1 ; j < edges.size(); j++){
 					SIFTFeature f2 = edges.get(j);
 					if(f2.type == f1.type){
-						//These can be mirrored (since they are the same thing)
-						double thetaij = f1.angleTo(f2);
-						//FIXME This may be broken as an edge rotated 180 degrees is
-						// the same as the original. This can be fixed (kinda)
-						//by making the orientation more meaning full (like 
-						// degree of the two different connected nodes.
-						//But  maybe just need to fix the calculation so it works?
-						double phi = 1 - Math.cos(f1.theta + f2.theta - 2 * thetaij);
+						double phi = rotFactor(f1,f2);
 						double s = scaleFactor(f1,f2);
 						double d = distanceFactor(f1,f2);
+
+						double thetaij = f1.angleTo(f2);
+						Point mid = f1.midPointTo(f2);
+						double rij  = mid.x()*Math.cos(thetaij) + mid.y()*Math.sin(thetaij);
+
+						double vote = phi*s*d;
+						if(vote >2 ){
+							System.out.println(vote);
+						}
+						votes.add(new Vote(rij,Math.toDegrees(thetaij),vote));
 					}
 				}
 			}
+
+			double maxang = Double.MIN_VALUE;
+			double maxrad = Double.MIN_VALUE;
+			double minang = Double.MAX_VALUE;
+			double minrad = Double.MAX_VALUE;
+
+			for(Vote v : votes){
+				maxang = Math.max(maxang, v.theta);
+				maxrad = Math.max(maxrad, v.rad);
+				minrad = Math.min(minrad, v.rad);
+				minang = Math.min(minang, v.theta);
+			}
+
+//			System.out.println("\n" + (maxang - minang) + " deg " + (maxrad-minrad));
+			double[][] voteSpace = new double[(int)(maxang- minang)+1][(int)(maxrad-minrad)+1];
+			for(Vote v : votes){
+				voteSpace[(int)(v.theta-minang)][(int)(v.rad-minrad)] += v.vote;
+			}
+
+
+			voteSpace = Image.gaussianBlur(voteSpace, sigma_gauss);
+
+			Image.draw(voteSpace);
+
+
+
 			return "x";
 		}
-		
+
+
+		private double rotFactor(SIFTFeature f1, SIFTFeature f2){
+			//These can be mirrored (since they are the same thing)
+			//FIXME This may be broken as an edge rotated 180 degrees is
+			// the same as the original. This can be fixed (kinda)
+			//by making the orientation more meaning full (like
+			// degree of the two different connected nodes.
+			//But  maybe just need to fix the calculation so it works?
+			double thetaij = f1.angleTo(f2);
+			return 1 - Math.cos(f1.theta + f2.theta - 2 * thetaij);
+		}
+
 		private double scaleFactor(SIFTFeature f1, SIFTFeature f2){
 			double top = -Math.abs(f1.scale - f2.scale);
 			double bottom = sigma_scale*(f1.scale + f2.scale);
 			double exponent = top / bottom;
-			return Math.exp(exponent * exponent);
+			double val =  Math.exp(exponent);
+			return val * val;
 		}
-		
+
 		private double distanceFactor(SIFTFeature f1, SIFTFeature f2){
 			if(!distanceBound){
 				return 1;
@@ -172,27 +217,43 @@ public interface Analysis {
 			double exp = -(d*d)/(2*sigma_distance*sigma_distance);
 			return Math.exp(exp);
 		}
-		
-		private class SIFTFeature{
-			public final Point p;
-			public final double theta, scale;
-			public final int type;
-			
-			public SIFTFeature(double x, double y, double theta, double scale, int type){
-				this.p = new Point(x,y);
-				this.theta = theta;
-				this.scale = scale;
-				this.type = type;
-			}
-			
-			public double angleTo(SIFTFeature other){
-				return this.p.angleToOtherFromX(other.p);
-			}
 
-			public double distanceTo(SIFTFeature other){
-				return this.p.distanceTo(other.p);
-			}
+	}
 
+	public class SIFTFeature{
+		public final Point p;
+		public final double theta, scale;
+		public final int type;
+
+		public SIFTFeature(double x, double y, double theta, double scale, int type){
+			this.p = new Point(x,y);
+			this.theta = theta;
+			this.scale = scale;
+			this.type = type;
 		}
+
+		public double angleTo(SIFTFeature other){
+			return this.p.angleToOtherFromX(other.p);
+		}
+
+		public double distanceTo(SIFTFeature other){
+			return this.p.distanceTo(other.p);
+		}
+
+		public Point midPointTo(SIFTFeature other){
+			return this.p.midPointTo(other.p);
+		}
+
+	}
+
+	public class Vote{
+		public final double rad, theta, vote;
+
+		public Vote(double radius, double theta, double vote){
+			this.rad = radius;
+			this.theta = theta;
+			this.vote = vote;
+		}
+
 	}
 }
