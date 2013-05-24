@@ -11,3 +11,5 @@ bin/
 .Rhistory
 *.old
 *.dot
+ex.pbm
+temp.svg
