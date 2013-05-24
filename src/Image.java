@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Image {
 
@@ -121,6 +123,28 @@ public class Image {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static List<Point> findMax(double[][] image, double minAngle, double minDistance){
+		List<Point> p = new ArrayList<>();
+
+		int maxi = 0, maxj = 0;
+
+		for(int i = 0; i < image.length; i++){
+			for(int j = 0; j < image[i].length; j++){
+				if(image[i][j] > image[maxi][maxj]){
+					maxi = i;
+					maxj = j;
+				}
+			}
+		}
+
+		double angle = maxi + minAngle;
+		double rad = maxj + minDistance;
+
+		p.add(new Point(angle,rad));
+
+		return p;
 	}
 
 
