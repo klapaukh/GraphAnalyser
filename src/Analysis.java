@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -182,49 +183,18 @@ public interface Analysis {
 				voteSpace[(int) (v.theta - minang)][(int) (v.rad - minrad)] += v.vote;
 			}
 
-			voteSpace = Image.gaussianBlur(voteSpace, sigma_gauss);
+//			voteSpace = Image.gaussianBlur(voteSpace, sigma_gauss);
 
 			Image.draw(voteSpace);
 
 //			System.out.println("\n ("+minang + "," + maxang+") deg : (" + minrad+","+maxrad+")");
-			List<Point> axis = Image.findMax(voteSpace, minang, minrad);
+			List<Point> axis = Image.findMax(voteSpace, minang, minrad, 10, 10, 500);
 
-			// FIXME for now just get one
-			Point p = axis.get(0);
-
-			double angle = Math.toRadians(p.x());
-			double radius = p.y();
-
-			double xint = radius / Math.cos(angle);
-			double yint = radius / Math.sin(angle);
-
-			if (xint == Double.NaN) {
-				System.out.println();
-				System.out.printf("<line y1=\"%d\" x1=\"0\" y2=\"%d\" x2=\"1080\""
-						+ " style=\"stroke: rgb(0,255,0); stroke-width: 1; stroke-dasharray: 9, 5;\"/>", (int) (yint), (int) yint);
-				System.out.println();
-			} else if (yint == Double.NaN) {
-				System.out.println();
-				System.out.printf("<line x1=\"%d\" y1=\"0\" x2=\"%d\" y2=\"1080\""
-						+ " style=\"stroke: rgb(0,255,0); stroke-width: 1; stroke-dasharray: 9, 5;\"/>", (int) (xint), (int) xint);
-				System.out.println();
-			}else if (Double.compare(yint, 0) > 0 && Double.compare(xint, 0) > 0) {
-				//The line will be visible
-				System.out.println();
-				System.out.printf("<line x1=\"0\" y1=\"%d\" x2=\"%d\" y2=\"0\""
-						+ " style=\"stroke: rgb(0,255,0); stroke-width: 1; stroke-dasharray: 9, 5;\"/>", (int) (yint), (int) xint);
-				System.out.println();
-			} else {
-				//You can't see the line because it is offscreen if you only look at intercepts
-
-				//So we remake the yint, to be the y position at the right edge
-				yint = (1920-xint)*Math.tan(angle - (Math.PI/2));
-
-				System.out.println();
-//				System.out.println("radius: " + radius + " angle: " + Math.toDegrees(angle));
-				System.out.printf("<line x1=\"1920\" y1=\"%d\" x2=\"%d\" y2=\"0\""
-						+ " style=\"stroke: rgb(255,255,0); stroke-width: 10; stroke-dasharray: 9, 5;\"/>", (int) (yint), (int) xint);
-				System.out.println();
+			try {
+				Image.drawWithMirrorLines(g, axis);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 			return "x";
