@@ -60,4 +60,7 @@ public class Point {
 		return new Point((this.x + o.x)/2, (this.y + o.y)/2);
 	}
 
+	public String toString(){
+		return String.format("(%.2f, %.2f)", x, y);
+	}
 }
