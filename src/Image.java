@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.PriorityQueue;
 
 public class Image {
 
@@ -127,7 +126,7 @@ public class Image {
 
 	}
 
-	public static List<Point> findMax(double[][] image, double minAngle, double minDistance, double tooCloseDist, double tooCloseAngle, int numPoints) {
+	public static List<Point> findMax(double[][] image, double minAngle, double minDistance, double tooCloseDist, double tooCloseAngle, int numPoints, int numDeg, int numPix) {
 		List<Point> p = new ArrayList<>();
 
 		List<Pair<Integer, Integer>> best = new ArrayList<>();
@@ -158,7 +157,7 @@ public class Image {
 			}
 			Collections.sort(best, comp);
 			Collections.reverse(best);
-			while (best.size() > numPoints || image[best.get(best.size()-1).x][best.get(best.size()-1).y] == 0) {
+			while (best.size() > 0 && (best.size() > numPoints || image[best.get(best.size()-1).x][best.get(best.size()-1).y] == 0)) {
 				best.remove(best.size() - 1);
 			}
 		}
@@ -174,23 +173,47 @@ public class Image {
 //		System.err.println(bad);
 
 
+//		System.err.println();
+//		for(Pair<Integer,Integer> cp: best){
+//			System.err.println("(" + (cp.x + minAngle) + ", "+ (cp.y + minDistance)  + ") -- " + image[(int) (cp.x)][(int) (cp.y)]);
+//		}
 
 		for (Pair<Integer, Integer> b : best) {
-			double angle = b.x + minAngle;
-			double rad = b.y + minDistance;
+			double angle = b.x * numDeg + (numDeg/2) + minAngle;
+			double rad = b.y * numPix + (numPix/2) + minDistance;
 
 			p.add(new Point(angle, rad));
 		}
 
-		System.err.println();
-		for(Point cp: p){
-			System.err.println(cp + " -- " + image[(int) (cp.x()-minAngle)][(int) (cp.y()-minDistance)]);
-		}
 
 		return p;
 	}
 
-	public static void drawWithMirrorLines(Graph g, List<Point> axis) throws FileNotFoundException {
+	public static double[][] sampleDown(double[][] image, int numDeg, int numPix){
+		int width = image.length/ numDeg + Math.min(1, image.length % numDeg);
+		int height = image[0].length/ numPix + Math.min(1, image[0].length % numPix);
+		double[][] newImage = new double[width][height];
+
+
+		for(int i = 0; i < newImage.length ; i++){
+			for(int j = 0; j < newImage[i].length; j++){
+				newImage[i][j] = 0;
+				for(int k = 0; k < numDeg; k++){
+					for(int l = 0; l < numPix; l++){
+						int x = i * numDeg + k;
+						int y = j * numPix + l;
+						if( x < image.length && y < image[x].length){
+							newImage[i][j] += image[x][y];
+						}
+					}
+				}
+			}
+		}
+
+		return newImage;
+	}
+
+	public static void drawWithMirrorLines(Graph g, List<Point> axis, List<Analysis.Vote> votes) throws FileNotFoundException {
 
 		PrintStream out = new PrintStream(new File("temp.svg"));
 
@@ -235,6 +258,24 @@ public class Image {
 		for (i = 0; i < g.numNodes(); i++) {
 			for (j = i + 1; j < g.numNodes(); j++) {
 				if (g.isEdge(i, j)) {
+					String color = "rgb(255,0,0)";
+
+					//Am I mirrored
+
+					//What was my vote
+					out: for(Analysis.Vote v : votes){
+						if((v.i == i && v.j == j) || (v.i2 ==i && v.j2 == j)){
+							for(Point p : axis){
+								if(Math.abs(p.x() - v.theta) < 10 && Math.abs(p.y() - v.rad) < 15){
+									color = "rgb(0,0,0)";
+									break out;
+								}
+							}
+						}
+					}
+
+
+					//Draw me
 					Point n1 = g.getNode(i);
 					Point n2 = g.getNode(j);
 					int x1 = (int) n1.x();
@@ -242,7 +283,7 @@ public class Image {
 					int y1 = (int) n1.y();
 					int y2 = (int) n2.y();
 					out.printf("<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\" stroke=\"%s\" fill=\"%s\" opacity=\"%.2f\"/>\n", x1, x2, y1, y2,
-							"rgb(255,0,0)", "rgb(255,0,0)", 1.0f);
+							color, color, 1.0f);
 				}
 			}
 		}
