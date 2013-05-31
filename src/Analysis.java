@@ -106,13 +106,17 @@ public interface Analysis {
 		private final double sigma_scale;
 		private final boolean distanceBound;
 		private final double sigma_distance;
-		private final double sigma_gauss;
+		private final int numMirrors;
+		private final int angleMerge;
+		private final int pixelsMerge;
 
-		public MirrorSymmetry(double sigma_scale, double sigma_distance, double sigma_gauss, boolean useDistanceWeighting) {
+		public MirrorSymmetry(double sigma_scale, double sigma_distance, boolean useDistanceWeighting, int numMirrors, int angleMerge, int pixelMerge) {
 			this.sigma_scale = sigma_scale;
 			this.distanceBound = useDistanceWeighting;
 			this.sigma_distance = sigma_distance;
-			this.sigma_gauss = sigma_gauss;
+			this.numMirrors = numMirrors;
+			this.angleMerge = angleMerge;
+			this.pixelsMerge = pixelMerge;
 		}
 
 		public String toString() {
@@ -133,7 +137,7 @@ public interface Analysis {
 						double y = (n1.y() + n2.y()) / 2;
 						double length = n1.distanceTo(n2);
 						double theta = n1.angleToOtherFromX(n2);
-						edges.add(new SIFTFeature(x, y, theta, length, 1));
+						edges.add(new SIFTFeature(x, y, theta, length, 1,i,j));
 					}
 				}
 			}
@@ -159,7 +163,7 @@ public interface Analysis {
 							System.out.println(vote);
 						}
 
-						votes.add(new Vote(rij, Math.toDegrees(thetaij), vote));
+						votes.add(new Vote(rij, Math.toDegrees(thetaij), vote,f1.node1,f1.node2, f2.node1, f2.node2));
 					}
 				}
 			}
@@ -184,20 +188,46 @@ public interface Analysis {
 			}
 
 //			voteSpace = Image.gaussianBlur(voteSpace, sigma_gauss);
+			int numDeg = angleMerge, numPix = pixelsMerge;
+			double[][] redVoteSpace = Image.sampleDown(voteSpace, numDeg, numPix);
 
-			Image.draw(voteSpace);
+			Image.draw(redVoteSpace);
 
 //			System.out.println("\n ("+minang + "," + maxang+") deg : (" + minrad+","+maxrad+")");
-			List<Point> axis = Image.findMax(voteSpace, minang, minrad, 10, 10, 500);
+			List<Point> axis = Image.findMax(redVoteSpace, minang, minrad, 10/numDeg, 10/numPix, numMirrors, numDeg, numPix);
 
 			try {
-				Image.drawWithMirrorLines(g, axis);
+				Image.drawWithMirrorLines(g, axis, votes);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			return "x";
+			//compute score
+			// \sigma numEdges mirrored
+			// ----------------------
+			// numEdges * numMirrors
+			int numEdgesMirorred = 0;
+			int numEdges = 0;
+			for (int i = 0; i < g.numNodes(); i++) {
+				for (int j = i + 1; j < g.numNodes(); j++) {
+					if (g.isEdge(i, j)) {
+						numEdges ++;
+						//What was my vote
+						for(Analysis.Vote v : votes){
+							if((v.i == i && v.j == j) || (v.i2 ==i && v.j2 == j)){
+								for(Point p : axis){
+									if(Math.abs(p.x() - v.theta) < 10 && Math.abs(p.y() - v.rad) < 15){
+										numEdgesMirorred++;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			double score = numEdgesMirorred / (double)(axis.size() * numEdges);
+			return String.format("%.4f", score);
 		}
 
 		private double rotFactor(SIFTFeature f1, SIFTFeature f2) {
@@ -228,12 +258,15 @@ public interface Analysis {
 		public final Point p;
 		public final double theta, scale;
 		public final int type;
+		public final int node1, node2;
 
-		public SIFTFeature(double x, double y, double theta, double scale, int type) {
+		public SIFTFeature(double x, double y, double theta, double scale, int type, int node1, int node2) {
 			this.p = new Point(x, y);
 			this.theta = theta;
 			this.scale = scale;
 			this.type = type;
+			this.node1 = node1;
+			this.node2 = node2;
 		}
 
 		public double angleTo(SIFTFeature other) {
@@ -252,11 +285,16 @@ public interface Analysis {
 
 	public class Vote {
 		public final double rad, theta, vote;
+		public final int i, j, i2, j2; // voting edges
 
-		public Vote(double radius, double theta, double vote) {
+		public Vote(double radius, double theta, double vote, int i, int j, int i2, int j2) {
 			this.rad = radius;
 			this.theta = theta;
 			this.vote = vote;
+			this.i = i;
+			this.j = j;
+			this.i2 = i2;
+			this.j2 = j2;
 		}
 
 	}
