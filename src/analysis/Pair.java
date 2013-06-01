@@ -1,3 +1,4 @@
+package analysis;
 
 public class Pair<E,F> {
 

@@ -1,3 +1,4 @@
+package analysis;
 
 public class Point {
 	private final double x;
