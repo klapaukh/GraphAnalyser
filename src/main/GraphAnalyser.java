@@ -49,7 +49,7 @@ public class GraphAnalyser {
 		tests.add(new Analysis.LayoutProperty(Analysis.KG));
 		tests.add(new Analysis.LayoutProperty(Analysis.WELLMASS));
 		tests.add(new Analysis.LayoutProperty(Analysis.EDGECHARGE));
-		tests.add(new MirrorSymmetry(0.1, 2, false,4,5,5));
+		tests.add(new MirrorSymmetry(0.1, 2, false,4,5,5,10,10));
 
 		List<Graph> graphs = new ArrayList<>();
 		try {

@@ -10,9 +10,9 @@ public class MirrorSymmetry extends Symmetry {
 
 	public MirrorSymmetry(double sigma_scale, double sigma_distance,
 			boolean useDistanceWeighting, int numMirrors, int angleMerge,
-			int pixelMerge) {
+			int pixelMerge, int xMin, int yMin) {
 		super(sigma_scale, useDistanceWeighting, sigma_distance, numMirrors,
-				angleMerge, pixelMerge);
+				angleMerge, pixelMerge, xMin, yMin);
 	}
 
 	public String toString() {
