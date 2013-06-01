@@ -194,13 +194,13 @@ public interface Analysis {
 			int numDeg = angleMerge, numPix = pixelsMerge;
 			double[][] redVoteSpace = Image.sampleDown(voteSpace, numDeg, numPix);
 
-			Image.draw(redVoteSpace);
+			Image.draw(redVoteSpace, "ex.pbm");
 
 //			System.out.println("\n ("+minang + "," + maxang+") deg : (" + minrad+","+maxrad+")");
 			List<Point> axis = Image.findMax(redVoteSpace, minang, minrad, 10/numDeg, 10/numPix, numMirrors, numDeg, numPix);
 
 			try {
-				Image.drawWithMirrorLines(g, axis, votes);
+				Image.drawWithMirrorLines(g, axis, votes,"temp.svg");
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
