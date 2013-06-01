@@ -1,8 +1,4 @@
 package analysis;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-
 import main.Graph;
 
 public interface Analysis {
