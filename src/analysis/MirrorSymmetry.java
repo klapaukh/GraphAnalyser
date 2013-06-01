@@ -50,7 +50,7 @@ public class MirrorSymmetry extends Symmetry {
 		List<Point> axis = findMaxima(votes);
 
 		try {
-			Image.drawWithMirrorLines(g, axis, votes, "temp.svg");
+			Image.drawWithMirrorLines(g, axis, votes, "temp.svg", xMin, yMin);
 		} catch (FileNotFoundException e) {
 			// Don't really care too much if this fails
 			e.printStackTrace();

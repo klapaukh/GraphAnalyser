@@ -21,8 +21,8 @@ public abstract class Symmetry implements Analysis {
 	
 	private final int xMerge;
 	private final int yMerge;
-	private final int xMin;
-	private final int yMin;
+	protected final int xMin;
+	protected final int yMin;
 	
 	/**
 	 * Constructor for Symmerty

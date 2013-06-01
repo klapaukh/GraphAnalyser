@@ -311,7 +311,7 @@ public class Image {
 	 * @throws FileNotFoundException If it can't file the file in filename
 	 */
 	public static void drawWithMirrorLines(Graph g, List<Point> axis,
-			List<Vote> votes, String filename) throws FileNotFoundException {
+			List<Vote> votes, String filename, int xMin, int yMin) throws FileNotFoundException {
 
 		PrintStream out = new PrintStream(new File(filename));
 
@@ -366,8 +366,8 @@ public class Image {
 					out: for (Vote v : votes) {
 						if ((v.i == i && v.j == j) || (v.i2 == i && v.j2 == j)) {
 							for (Point p : axis) {
-								if (Math.abs(p.x() - v.x) < 10
-										&& Math.abs(p.y() - v.y) < 15) {
+								if (Math.abs(p.x() - v.x) < xMin
+										&& Math.abs(p.y() - v.y) < yMin) {
 									color = "rgb(0,0,0)";
 									break out;
 								}
