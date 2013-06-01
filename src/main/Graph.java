@@ -13,7 +13,7 @@ import analysis.Point;
  * structure and position of each vertex. Issues of vertex size and edge labels
  * are ignored.
  *
- * @author Roman Klapaukh
+ * @author Roma Klapaukh
  *
  */
 public class Graph {
