@@ -8,9 +8,7 @@ import main.Graph;
 
 public class MirrorSymmetry extends Symmetry {
 
-	private final double sigma_scale;
-	private final boolean distanceBound;
-	private final double sigma_distance;
+
 	private final int numMirrors;
 	private final int angleMerge;
 	private final int pixelsMerge;
@@ -18,9 +16,8 @@ public class MirrorSymmetry extends Symmetry {
 	public MirrorSymmetry(double sigma_scale, double sigma_distance,
 			boolean useDistanceWeighting, int numMirrors, int angleMerge,
 			int pixelMerge) {
-		this.sigma_scale = sigma_scale;
-		this.distanceBound = useDistanceWeighting;
-		this.sigma_distance = sigma_distance;
+		super(sigma_scale, useDistanceWeighting, sigma_distance);
+		
 		this.numMirrors = numMirrors;
 		this.angleMerge = angleMerge;
 		this.pixelsMerge = pixelMerge;
@@ -148,21 +145,6 @@ public class MirrorSymmetry extends Symmetry {
 		return Math.abs(Math.cos(f1.theta + f2.theta - 2 * thetaij));
 	}
 
-	private double scaleFactor(SIFTFeature f1, SIFTFeature f2) {
-		double top = -Math.abs(f1.scale - f2.scale);
-		double bottom = sigma_scale * (f1.scale + f2.scale);
-		double exponent = top / bottom;
-		double val = Math.exp(exponent);
-		return val * val;
-	}
 
-	private double distanceFactor(SIFTFeature f1, SIFTFeature f2) {
-		if (!distanceBound) {
-			return 1;
-		}
-		double d = f1.distanceTo(f2);
-		double exp = -(d * d) / (2 * sigma_distance * sigma_distance);
-		return Math.exp(exp);
-	}
 
 }
