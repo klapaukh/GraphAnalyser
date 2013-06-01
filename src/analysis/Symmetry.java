@@ -6,7 +6,7 @@ import java.util.List;
 import main.Graph;
 
 /**
- * This class is the commmom computations needed to implement the different 
+ * This class is the commmon computations needed to implement the different 
  * symmetry algorithms. Pretty much takes care of the Hough space voting stuff. 
  * 
  * @author Roma Klapaukh
@@ -120,15 +120,15 @@ public abstract class Symmetry implements Analysis {
 		double miny = Double.MAX_VALUE;
 
 		for (Vote v : votes) {
-			maxx = Math.max(maxx, v.theta);
-			maxy = Math.max(maxy, v.rad);
-			miny = Math.min(miny, v.rad);
-			minx = Math.min(minx, v.theta);
+			maxx = Math.max(maxx, v.x);
+			maxy = Math.max(maxy, v.y);
+			miny = Math.min(miny, v.y);
+			minx = Math.min(minx, v.x);
 		}
 		
 		double[][] voteSpace = new double[(int) (maxx - minx) + 1][(int) (maxy - miny) + 1];
 		for (Vote v : votes) {
-			voteSpace[(int) (v.theta - minx)][(int) (v.rad - miny)] += v.vote;
+			voteSpace[(int) (v.x - minx)][(int) (v.y - miny)] += v.vote;
 		}
 		
 		double[][] voteRedSpace = Image.sampleDown(voteSpace, xMerge, yMerge);
@@ -164,8 +164,8 @@ public abstract class Symmetry implements Analysis {
 					for (Vote v : votes) {
 						if ((v.i == i && v.j == j) || (v.i2 == i && v.j2 == j)) {
 							for (Point p : features) {
-								if (Math.abs(p.x() - v.theta) < xMin
-										&& Math.abs(p.y() - v.rad) < yMin) {
+								if (Math.abs(p.x() - v.x) < xMin
+										&& Math.abs(p.y() - v.y) < yMin) {
 									numEdgesMatched++;
 								}
 							}

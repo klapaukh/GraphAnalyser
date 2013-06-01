@@ -41,7 +41,7 @@ public class MirrorSymmetry extends Symmetry {
 
 					double vote = phi * s * d;
 
-					votes.add(new Vote(rij, Math.toDegrees(thetaij), vote,
+					votes.add(new Vote(Math.toDegrees(thetaij), rij, vote,
 							f1.node1, f1.node2, f2.node1, f2.node2));
 				}
 			}

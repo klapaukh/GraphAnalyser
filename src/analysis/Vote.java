@@ -1,12 +1,12 @@
 package analysis;
 
 public class Vote {
-	public final double rad, theta, vote;
+	public final double y, x, vote;
 	public final int i, j, i2, j2; // voting edges
 
-	public Vote(double radius, double theta, double vote, int i, int j, int i2, int j2) {
-		this.rad = radius;
-		this.theta = theta;
+	public Vote(double x, double y, double vote, int i, int j, int i2, int j2) {
+		this.x = x;
+		this.y = y;
 		this.vote = vote;
 		this.i = i;
 		this.j = j;

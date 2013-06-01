@@ -366,8 +366,8 @@ public class Image {
 					out: for (Vote v : votes) {
 						if ((v.i == i && v.j == j) || (v.i2 == i && v.j2 == j)) {
 							for (Point p : axis) {
-								if (Math.abs(p.x() - v.theta) < 10
-										&& Math.abs(p.y() - v.rad) < 15) {
+								if (Math.abs(p.x() - v.x) < 10
+										&& Math.abs(p.y() - v.y) < 15) {
 									color = "rgb(0,0,0)";
 									break out;
 								}
