@@ -33,7 +33,7 @@ public class MirrorSymmetry extends Symmetry {
 					double s = scaleFactor(f1, f2);
 					double d = distanceFactor(f1, f2);
 
-					double thetaij = f1.angleTo(f2);
+					double thetaij = f1.angleToForwards(f2);
 					Point mid = f1.midPointTo(f2);
 
 					double rij = mid.x() * Math.cos(thetaij) + mid.y()
@@ -61,7 +61,7 @@ public class MirrorSymmetry extends Symmetry {
 	}
 
 	private double rotFactor(SIFTFeature f1, SIFTFeature f2) {
-		double thetaij = f1.angleTo(f2);
+		double thetaij = f1.angleToForwards(f2);
 		return Math.abs(Math.cos(f1.theta + f2.theta - 2 * thetaij));
 	}
 

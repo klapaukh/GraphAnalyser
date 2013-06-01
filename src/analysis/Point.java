@@ -94,8 +94,12 @@ public class Point {
 	 * @param o The other point
 	 * @return The angle between points from the x axis
 	 */
-	public double angleToOtherFromX(Point o){
+	public double angleToOtherFromXForward(Point o){
 		return this.minus(o).forceForwards().angleToX();
+	}
+	
+	public double angleToOtherFromX(Point o){
+		return this.minus(o).angleToX();
 	}
 
 	/**

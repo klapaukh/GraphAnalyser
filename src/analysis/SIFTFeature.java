@@ -17,10 +17,14 @@ public class SIFTFeature {
 		this.node2 = node2;
 	}
 
+	public double angleToForwards(SIFTFeature other) {
+		return this.p.angleToOtherFromXForward(other.p);
+	}
+
 	public double angleTo(SIFTFeature other) {
 		return this.p.angleToOtherFromX(other.p);
 	}
-
+	
 	public double distanceTo(SIFTFeature other) {
 		return this.p.distanceTo(other.p);
 	}

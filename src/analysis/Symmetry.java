@@ -98,7 +98,7 @@ public abstract class Symmetry implements Analysis {
 					double x = (n1.x() + n2.x()) / 2;
 					double y = (n1.y() + n2.y()) / 2;
 					double length = n1.distanceTo(n2);
-					double theta = n1.angleToOtherFromX(n2);
+					double theta = n1.angleToOtherFromXForward(n2);
 					edges.add(new SIFTFeature(x, y, theta, length, 1, i, j));
 				}
 			}
