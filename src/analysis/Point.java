@@ -135,6 +135,15 @@ public class Point {
 		return new Point((this.x + o.x)/2, (this.y + o.y)/2);
 	}
 
+	/**
+	 * Returns the same vector as this point but with unit length.
+	 * 
+	 * @return The same direction with unit length
+	 */
+	public Point normalise(){
+		double length = this.length();
+		return new Point(this.x/ length, this.y / length);
+	}
 	
 	public String toString(){
 		return String.format("(%.2f, %.2f)", x, y);
