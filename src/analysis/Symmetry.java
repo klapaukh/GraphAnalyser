@@ -87,7 +87,7 @@ public abstract class Symmetry implements Analysis {
 		
 		Image.draw(voteRedSpace, "ex.pbm");
 		
-		return Image.findMax(voteRedSpace, minx, miny, yMin/yMerge, xMin/xMerge, numFeatures, xMerge, yMerge);
+		return Image.findMax(voteRedSpace, minx, miny, xMin/xMerge, yMin/yMerge, numFeatures, xMerge, yMerge);
 	}
 	
 	protected double computeScore(Graph g, List<Point> axis, List<Vote> votes){

@@ -196,7 +196,7 @@ public class Image {
 	 * @return Up to numPoints points representing the maxima in the image.
 	 */
 	public static List<Point> findMax(double[][] image, double minAngle,
-			double minDistance, double tooCloseDist, double tooCloseAngle,
+			double minDistance, double tooCloseAngle, double tooCloseDist,
 			int numPoints, int numDeg, int numPix) {
 		List<Point> p = new ArrayList<>();
 
