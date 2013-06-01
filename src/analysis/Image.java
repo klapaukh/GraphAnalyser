@@ -311,7 +311,7 @@ public class Image {
 	 * @throws FileNotFoundException If it can't file the file in filename
 	 */
 	public static void drawWithMirrorLines(Graph g, List<Point> axis,
-			List<Analysis.Vote> votes, String filename) throws FileNotFoundException {
+			List<Vote> votes, String filename) throws FileNotFoundException {
 
 		PrintStream out = new PrintStream(new File(filename));
 
@@ -363,7 +363,7 @@ public class Image {
 					// Am I mirrored
 
 					// What was my vote
-					out: for (Analysis.Vote v : votes) {
+					out: for (Vote v : votes) {
 						if ((v.i == i && v.j == j) || (v.i2 == i && v.j2 == j)) {
 							for (Point p : axis) {
 								if (Math.abs(p.x() - v.theta) < 10
