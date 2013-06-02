@@ -50,7 +50,7 @@ public class TranslationalSymmetry extends Symmetry {
 	}
 
 	private double rotFactor(SIFTFeature f1, SIFTFeature f2) {
-		return Math.abs(Math.sin(f1.theta - f2.theta));
+		return Math.abs(Math.cos(f1.theta - f2.theta));
 	}
 
 	public String toString() {
