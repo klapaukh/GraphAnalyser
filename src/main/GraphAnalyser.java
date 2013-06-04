@@ -6,6 +6,8 @@ import java.util.List;
 
 import analysis.Analysis;
 import analysis.MirrorSymmetry;
+import analysis.RotationalSymmetry;
+import analysis.TranslationalSymmetry;
 
 public class GraphAnalyser {
 
@@ -50,6 +52,8 @@ public class GraphAnalyser {
 		tests.add(new Analysis.LayoutProperty(Analysis.WELLMASS));
 		tests.add(new Analysis.LayoutProperty(Analysis.EDGECHARGE));
 		tests.add(new MirrorSymmetry(0.1, 2, false,4,5,5,10,10));
+		tests.add(new TranslationalSymmetry(0.1, 2, false,1,5,5,10,10));
+		tests.add(new RotationalSymmetry(0.1, 2, false,1,5,5,10,10));
 
 		List<Graph> graphs = new ArrayList<>();
 		try {
