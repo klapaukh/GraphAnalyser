@@ -13,3 +13,5 @@ bin/
 *.dot
 ex.pbm
 temp.svg
+mirror.svg
+rotation.svg
