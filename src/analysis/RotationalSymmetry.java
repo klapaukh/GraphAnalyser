@@ -1,5 +1,6 @@
 package analysis;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,13 +30,19 @@ public class RotationalSymmetry extends Symmetry {
 
 					//Not sure this is quite right
 					double gamma = f1.angleTo(f2);
-					double dist = f1.distanceTo(f2)/2;
-					double beta = (f1.theta - f2.theta + Math.PI)/2.0;
-					double r = dist/Math.cos(beta);
 
-					double x = f1.p.x() + r * Math.cos(beta + gamma);
-					double y = f1.p.y() + r * Math.sin(beta + gamma);
-					
+
+					double dist = f1.distanceTo(f2)/2;
+
+					double beta = (Math.PI - (f2.theta - f1.theta))/2.0;
+
+					double r = dist/Math.cos(beta);
+//					double r = (dist*Math.sqrt(1+ Math.pow(Math.tan(beta),2)));
+
+					double epsilon = 2*Math.PI - (beta + gamma + Math.PI/2);
+					double x = f1.p.x() - r * Math.sin(epsilon);
+					double y = f1.p.y() - r * Math.cos(epsilon);
+
 					double vote = s * d;
 
 					votes.add(new Vote(x, y, vote, f1.node1, f1.node2, f2.node1, f2.node2));
@@ -45,7 +52,12 @@ public class RotationalSymmetry extends Symmetry {
 
 		List<Point> axis = findMaxima(votes);
 
-		// Drawing would be good here
+		try {
+			Image.drawSVG(g, axis, votes, "rotation.svg", xMin, yMin, Image.ROTATION);
+		} catch (FileNotFoundException e) {
+			// Don't really care too much if this fails
+			e.printStackTrace();
+		}
 
 		double score = computeScore(g, axis, votes);
 		return String.format("%.4f", score);
