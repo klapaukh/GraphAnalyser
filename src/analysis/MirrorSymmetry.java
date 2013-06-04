@@ -22,8 +22,10 @@ public class MirrorSymmetry extends Symmetry {
 	public String value(Graph g) {
 		List<SIFTFeature> edges = createFeatures(g);
 
-		// Now that we have the features, we need to find axes
 		List<Vote> votes = new ArrayList<>();
+
+		// Now that we have the features, we need to find axes
+		// between pairs of edges
 		for (int i = 0; i < edges.size(); i++) {
 			SIFTFeature f1 = edges.get(i);
 			for (int j = i + 1; j < edges.size(); j++) {
@@ -45,12 +47,25 @@ public class MirrorSymmetry extends Symmetry {
 							f1.node1, f1.node2, f2.node1, f2.node2));
 				}
 			}
-		}
+			//And also around the edge itself
+			double thetaij = g.getNode(f1.node1).angleToOtherFromXForward(g.getNode(f1.node2));
+			Point mid = g.getNode(f1.node1).midPointTo(g.getNode(f1.node2));
+
+			double rij = mid.x() * Math.cos(thetaij) + mid.y()
+					* Math.sin(thetaij);
+
+			//This is obviously a great line for me!
+			double vote = 1;
+
+			votes.add(new Vote(Math.toDegrees(thetaij), rij, vote,
+					f1.node1, f1.node2, f1.node1, f1.node2));
+			}
+
 
 		List<Point> axis = findMaxima(votes);
 
 		try {
-			Image.drawWithMirrorLines(g, axis, votes, "temp.svg", xMin, yMin);
+			Image.drawSVG(g, axis, votes, "mirror.svg", xMin, yMin, Image.MIRROR);
 		} catch (FileNotFoundException e) {
 			// Don't really care too much if this fails
 			e.printStackTrace();
