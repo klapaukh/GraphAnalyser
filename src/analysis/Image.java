@@ -11,12 +11,11 @@ import java.util.List;
 import main.Graph;
 
 /**
- * This class contains methods for manipulating 2D arrays of doubles as if they
- * were grey scale images. It contains much of the common code needed by the
- * symmetry detection algorithms.
- * 
+ * This class contains methods for manipulating 2D arrays of doubles as if they were grey scale images. It contains much of the common code needed by
+ * the symmetry detection algorithms.
+ *
  * @author Roma Klapaukh
- * 
+ *
  */
 public class Image {
 
@@ -28,12 +27,17 @@ public class Image {
 	 */
 	private static final int Y = 1;
 
+	public static final int MIRROR = 0;
+	public static final int TRANSLATION = 1;
+	public static final int ROTATION = 2;
+
 	/**
-	 * Gaussian blur an array. This returns the resulting image
-	 * without affecting the original.
-	 * 
-	 * @param image The image to blur
-	 * @param sigma_gauss The sigma for the gaussian
+	 * Gaussian blur an array. This returns the resulting image without affecting the original.
+	 *
+	 * @param image
+	 *            The image to blur
+	 * @param sigma_gauss
+	 *            The sigma for the gaussian
 	 * @return The Gaussian blured image.
 	 */
 	public static double[][] gaussianBlur(double[][] image, double sigma_gauss) {
@@ -77,11 +81,12 @@ public class Image {
 	}
 
 	/**
-	 * Calculate the value for the gaussian at a given x
-	 * with a given sigma. Mean is 0.
-	 * 
-	 * @param x X value to find gaussian at
-	 * @param sigma Standard deviation of gaussian
+	 * Calculate the value for the gaussian at a given x with a given sigma. Mean is 0.
+	 *
+	 * @param x
+	 *            X value to find gaussian at
+	 * @param sigma
+	 *            Standard deviation of gaussian
 	 * @return The value of the gaussian
 	 */
 	private static double gaussian(double x, double sigma) {
@@ -92,19 +97,23 @@ public class Image {
 	}
 
 	/**
-	 * Apply a 1 dimentional convolution matrix to a given matrix.
-	 * mid gives the index of the middle of the filter
-	 * 
-	 * @param x The x co-ordinate in the image to find the value for
-	 * @param y The y coordinate in the image to find the value for
-	 * @param image The original image
-	 * @param kernel The 1D kernel being used
-	 * @param mid The center of the kernel (ie. the one which is (x,y))
-	 * @param axis X or Y representing the axis the 1D kernel should be applied to
+	 * Apply a 1 dimentional convolution matrix to a given matrix. mid gives the index of the middle of the filter
+	 *
+	 * @param x
+	 *            The x co-ordinate in the image to find the value for
+	 * @param y
+	 *            The y coordinate in the image to find the value for
+	 * @param image
+	 *            The original image
+	 * @param kernel
+	 *            The 1D kernel being used
+	 * @param mid
+	 *            The center of the kernel (ie. the one which is (x,y))
+	 * @param axis
+	 *            X or Y representing the axis the 1D kernel should be applied to
 	 * @return The value for (x,y) in the convolved image
 	 */
-	private static double convolve(int x, int y, double[][] image,
-			double[] kernel, int mid, int axis) {
+	private static double convolve(int x, int y, double[][] image, double[] kernel, int mid, int axis) {
 		if (axis != X && axis != Y) {
 			throw new RuntimeException("Illegal axis to convolve: " + axis);
 		}
@@ -136,11 +145,12 @@ public class Image {
 	}
 
 	/**
-	 * Draw a 2D double array as a gray scale image. It creates the
-	 * image using the netpbm format. 
-	 * 
-	 * @param image The image to draw
-	 * @param filename The filename to use
+	 * Draw a 2D double array as a gray scale image. It creates the image using the netpbm format.
+	 *
+	 * @param image
+	 *            The image to draw
+	 * @param filename
+	 *            The filename to use
 	 */
 	public static void draw(double[][] image, String filename) {
 
@@ -179,30 +189,34 @@ public class Image {
 	}
 
 	/**
-	 * Find the maximum points in the image. It turns the points into their
-	 * actual real world values, and will not return points which are too close
-	 * together. In the case of close together points it will return the maximum
-	 * point. In some cases points which are just beyond too close together
+	 * Find the maximum points in the image. It turns the points into their actual real world values, and will not return points which are too close
+	 * together. In the case of close together points it will return the maximum point. In some cases points which are just beyond too close together
 	 * may also only have the maximum value returned.
-	 * 
-	 * @param image The image to find points in 
-	 * @param minAngle Offset from first array index to actual value
-	 * @param minDistance Offset from second array index to actual value
-	 * @param tooCloseDist Min distance between second array indicies allowed
-	 * @param tooCloseAngle Min distance between first array indicies allowed
-	 * @param numPoints Maximum number of points to return
-	 * @param numDeg Number of real values one step in the first array index represents
-	 * @param numPix Number of real value one step in the second array index represents
+	 *
+	 * @param image
+	 *            The image to find points in
+	 * @param minAngle
+	 *            Offset from first array index to actual value
+	 * @param minDistance
+	 *            Offset from second array index to actual value
+	 * @param tooCloseDist
+	 *            Min distance between second array indicies allowed
+	 * @param tooCloseAngle
+	 *            Min distance between first array indicies allowed
+	 * @param numPoints
+	 *            Maximum number of points to return
+	 * @param numDeg
+	 *            Number of real values one step in the first array index represents
+	 * @param numPix
+	 *            Number of real value one step in the second array index represents
 	 * @return Up to numPoints points representing the maxima in the image.
 	 */
-	public static List<Point> findMax(double[][] image, double minAngle,
-			double minDistance, double tooCloseAngle, double tooCloseDist,
+	public static List<Point> findMax(double[][] image, double minAngle, double minDistance, double tooCloseAngle, double tooCloseDist,
 			int numPoints, int numDeg, int numPix) {
 		List<Point> p = new ArrayList<>();
 
 		List<Pair<Integer, Integer>> best = new ArrayList<>();
-		PeakComparator comp = new PeakComparator(image, tooCloseDist,
-				tooCloseAngle);
+		PeakComparator comp = new PeakComparator(image, tooCloseDist, tooCloseAngle);
 
 		best.add(new Pair<>(0, 0));
 
@@ -229,9 +243,7 @@ public class Image {
 			}
 			Collections.sort(best, comp);
 			Collections.reverse(best);
-			while (best.size() > 0
-					&& (best.size() > numPoints || image[best
-							.get(best.size() - 1).x][best.get(best.size() - 1).y] == 0)) {
+			while (best.size() > 0 && (best.size() > numPoints || image[best.get(best.size() - 1).x][best.get(best.size() - 1).y] == 0)) {
 				best.remove(best.size() - 1);
 			}
 		}
@@ -262,21 +274,20 @@ public class Image {
 		return p;
 	}
 
-	
 	/**
-	 * Reduce the size of the image. This merges cells from the top 
-	 * left. Each cell is combined as a linear sum. This preserves
-	 * the original image.
-	 * 
-	 * @param image The original image
-	 * @param numDeg The number of cells to merge in the first array dimension
-	 * @param numPix The number of cells to merge in the second array dimension
+	 * Reduce the size of the image. This merges cells from the top left. Each cell is combined as a linear sum. This preserves the original image.
+	 *
+	 * @param image
+	 *            The original image
+	 * @param numDeg
+	 *            The number of cells to merge in the first array dimension
+	 * @param numPix
+	 *            The number of cells to merge in the second array dimension
 	 * @return A smaller version of the original image
 	 */
 	public static double[][] sampleDown(double[][] image, int numDeg, int numPix) {
 		int width = image.length / numDeg + Math.min(1, image.length % numDeg);
-		int height = image[0].length / numPix
-				+ Math.min(1, image[0].length % numPix);
+		int height = image[0].length / numPix + Math.min(1, image[0].length % numPix);
 		double[][] newImage = new double[width][height];
 
 		for (int i = 0; i < newImage.length; i++) {
@@ -298,20 +309,23 @@ public class Image {
 	}
 
 	/**
-	 * Draw the graph with the mirror lines described in axis. Note that the mirror
-	 * lines are specied by their closest point to the origin.
-	 * The file is an SVG file. Unmirrored edges are red, and mirrored edges are black.
-	 * Mirrors are drawn as dotted yellow lines. A green bounding box is drawn
+	 * Draw the graph with the mirror lines described in axis. Note that the mirror lines are specied by their closest point to the origin. The file
+	 * is an SVG file. Unmirrored edges are red, and mirrored edges are black. Mirrors are drawn as dotted yellow lines. A green bounding box is drawn
 	 * around 1920x1080.
-	 * 
-	 * @param g Graph to draw
-	 * @param axis List of mirror lines
-	 * @param votes All the votes used to find the mirror lines
-	 * @param filename The filename to write to
-	 * @throws FileNotFoundException If it can't file the file in filename
+	 *
+	 * @param g
+	 *            Graph to draw
+	 * @param axis
+	 *            List of mirror lines
+	 * @param votes
+	 *            All the votes used to find the mirror lines
+	 * @param filename
+	 *            The filename to write to
+	 * @throws FileNotFoundException
+	 *             If it can't file the file in filename
 	 */
-	public static void drawWithMirrorLines(Graph g, List<Point> axis,
-			List<Vote> votes, String filename, int xMin, int yMin) throws FileNotFoundException {
+	public static void drawSVG(Graph g, List<Point> axis, List<Vote> votes, String filename, int xMin, int yMin, int type)
+			throws FileNotFoundException {
 
 		PrintStream out = new PrintStream(new File(filename));
 
@@ -324,8 +338,7 @@ public class Image {
 		out.printf("\"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">\n");
 		out.printf("<svg xmlns=\"http://www.w3.org/2000/svg\"\n");
 		out.printf("xmlns:xlink=\"http://www.w3.org/1999/xlink\" xml:space=\"preserve\"\n");
-		out.printf("width=\"%dpx\" height=\"%dpx\"\n", screenWidth,
-				screenHeight);
+		out.printf("width=\"%dpx\" height=\"%dpx\"\n", screenWidth, screenHeight);
 
 		double minx = Double.MAX_VALUE, maxx = Double.MIN_VALUE, miny = Double.MAX_VALUE, maxy = Double.MIN_VALUE;
 		for (int i = 0; i < g.numNodes(); i++) {
@@ -349,8 +362,7 @@ public class Image {
 		maxx = Math.max(1920, maxx);
 		maxy = Math.max(1080, maxy);
 
-		out.printf("viewBox=\"%d %d %d %d\"\n", (long) minx, (long) miny,
-				(long) (maxx - minx), (long) (maxy - miny));
+		out.printf("viewBox=\"%d %d %d %d\"\n", (long) minx, (long) miny, (long) (maxx - minx), (long) (maxy - miny));
 		out.printf("zoomAndPan=\"disable\" >\n");
 
 		int i, j;
@@ -366,8 +378,7 @@ public class Image {
 					out: for (Vote v : votes) {
 						if ((v.i == i && v.j == j) || (v.i2 == i && v.j2 == j)) {
 							for (Point p : axis) {
-								if (Math.abs(p.x() - v.x) < xMin
-										&& Math.abs(p.y() - v.y) < yMin) {
+								if (Math.abs(p.x() - v.x) < xMin && Math.abs(p.y() - v.y) < yMin) {
 									color = "rgb(0,0,0)";
 									break out;
 								}
@@ -382,9 +393,8 @@ public class Image {
 					int x2 = (int) n2.x();
 					int y1 = (int) n1.y();
 					int y2 = (int) n2.y();
-					out.printf(
-							"<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\" stroke=\"%s\" fill=\"%s\" opacity=\"%.2f\"/>\n",
-							x1, x2, y1, y2, color, color, 1.0f);
+					out.printf("<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\" stroke=\"%s\" fill=\"%s\" opacity=\"%.2f\"/>\n", x1, x2, y1, y2, color,
+							color, 1.0f);
 				}
 			}
 		}
@@ -394,16 +404,32 @@ public class Image {
 			Point n = g.getNode(i);
 			int x = (int) (n.x() - width / 2);
 			int y = (int) (n.y() - height / 2);
-			out.printf(
-					"<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"%s\" stroke=\"%s\" opacity=\"%.2f\"/>\n",
-					x, y, width, height, "rgb(0,0,255)", "rgb(0,0,0)", 1.0f);
+			out.printf("<rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"%s\" stroke=\"%s\" opacity=\"%.2f\"/>\n", x, y, width, height,
+					"rgb(0,0,255)", "rgb(0,0,0)", 1.0f);
 
 		}
 
-		out.printf(
-				"<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" stroke-width=\"10\" stroke=\"rgb(0,255,0)\" fill-opacity=\"0\"/>\n",
+		out.printf("<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" stroke-width=\"10\" stroke=\"rgb(0,255,0)\" fill-opacity=\"0\"/>\n",
 				screenWidth, screenHeight);
 
+		if (type == MIRROR) {
+			drawMirrorLines(out, axis, minx, miny);
+		}else if(type == ROTATION){
+			drawRotationCenters(out,axis);
+		}
+
+		out.printf("</svg>");
+		out.close();
+
+	}
+
+	private static void drawRotationCenters(PrintStream out, List<Point> centers){
+		for(Point p : centers){
+			out.printf("<circle cx=\"%d\" cy=\"%d\" r=\"10\" stroke=\"yellow\" fill=\"yellow\" />\n", (int)p.x(), (int)p.y());
+		}
+	}
+
+	private static void drawMirrorLines(PrintStream out, List<Point> axis, double minx, double miny) {
 		for (Point p : axis) {
 
 			double angle = Math.toRadians(p.x());
@@ -424,8 +450,7 @@ public class Image {
 				x1 = x2;
 				y1 = 0;
 				y2 = 1080;
-			} else if (Double.compare(yint, miny) > 0
-					&& Double.compare(xint, minx) > 0) {
+			} else if (Double.compare(yint, miny) > 0 && Double.compare(xint, minx) > 0) {
 				// The line will be visible trivially, so we are fine
 
 			} else {
@@ -434,26 +459,19 @@ public class Image {
 				y1 = (int) ((1920 - xint) * Math.tan(angle - (Math.PI / 2)));
 
 			}
-			out.printf(
-					"<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\""
-							+ " style=\"stroke: rgb(255,255,0); stroke-width: 10; stroke-dasharray: 9, 5;\"/>\n",
-					x1, y1, x2, y2);
+			out.printf("<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\""
+					+ " style=\"stroke: rgb(255,255,0); stroke-width: 10; stroke-dasharray: 9, 5;\"/>\n", x1, y1, x2, y2);
 		}
-		out.printf("</svg>");
-		out.close();
-
 	}
 
 	/**
-	 * This is a comparator used to help find maxima in images.
-	 * It compares two coordinates to see which is bigger, and 
-	 * also checks if they are too close. 
-	 * 
+	 * This is a comparator used to help find maxima in images. It compares two coordinates to see which is bigger, and also checks if they are too
+	 * close.
+	 *
 	 * @author Roma Klapaukh
 	 *
 	 */
-	private static class PeakComparator implements
-			Comparator<Pair<Integer, Integer>> {
+	private static class PeakComparator implements Comparator<Pair<Integer, Integer>> {
 
 		/**
 		 * The image that coordinates are samples from
@@ -466,12 +484,15 @@ public class Image {
 
 		/**
 		 * Create a compartor for a given image with fixed limits
-		 * @param image The image to compare points from
-		 * @param limitDist Closest distance in second array dimension
-		 * @param limitAngle Closest distance in first array dimension
+		 *
+		 * @param image
+		 *            The image to compare points from
+		 * @param limitDist
+		 *            Closest distance in second array dimension
+		 * @param limitAngle
+		 *            Closest distance in first array dimension
 		 */
-		public PeakComparator(double[][] image, double limitDist,
-				double limitAngle) {
+		public PeakComparator(double[][] image, double limitDist, double limitAngle) {
 			this.image = image;
 			this.limitDist = limitDist;
 			this.limitAngle = limitAngle;
@@ -484,14 +505,15 @@ public class Image {
 
 		/**
 		 * Determines if two points are too close together
-		 * @param o1 Point 1
-		 * @param o2 Point 2
+		 *
+		 * @param o1
+		 *            Point 1
+		 * @param o2
+		 *            Point 2
 		 * @return True if they are too close
 		 */
-		public boolean tooClose(Pair<Integer, Integer> o1,
-				Pair<Integer, Integer> o2) {
-			return Math.abs(o1.x - o2.x) < limitAngle
-					&& Math.abs(o1.y - o2.y) < limitDist;
+		public boolean tooClose(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
+			return Math.abs(o1.x - o2.x) < limitAngle && Math.abs(o1.y - o2.y) < limitDist;
 		}
 	}
 }
