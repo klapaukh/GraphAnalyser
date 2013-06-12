@@ -1,7 +1,9 @@
 package analysis;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import main.Graph;
 
@@ -117,28 +119,26 @@ public abstract class Symmetry implements Analysis {
 		if(votes.isEmpty()){
 			return new ArrayList<Point>();
 		}
-		double maxx = 0;
-		double maxy = 0;
-		double minx = Double.MAX_VALUE;
-		double miny = Double.MAX_VALUE;
 
+
+		//Need to make the structure sparse!
+		Map<Pair<Integer,Integer>, Double> voteSpace = new HashMap<>();
 		for (Vote v : votes) {
-			maxx = Math.max(maxx, v.x);
-			maxy = Math.max(maxy, v.y);
-			miny = Math.min(miny, v.y);
-			minx = Math.min(minx, v.x);
+			int x = (int) (v.x/xMerge);
+			int y = (int) (v.y/yMerge);
+
+			x*=xMerge;
+			y*=yMerge;
+
+			Pair<Integer,Integer> point = new Pair<>(x,y);
+			Double soFar = voteSpace.get(point);
+			if(soFar== null){
+				voteSpace.put(point, v.vote);
+			}else{
+				voteSpace.put(point, soFar + v.vote);
+			}
 		}
-
-		double[][] voteSpace = new double[(int) (maxx - minx) + 1][(int) (maxy - miny) + 1];
-		for (Vote v : votes) {
-			voteSpace[(int) (v.x - minx)][(int) (v.y - miny)] += v.vote;
-		}
-
-		double[][] voteRedSpace = Image.sampleDown(voteSpace, xMerge, yMerge);
-
-		Image.draw(voteRedSpace, "ex.pbm");
-
-		return Image.findMax(voteRedSpace, minx, miny, xMin/xMerge, yMin/yMerge, numFeatures, xMerge, yMerge);
+		return Image.findMax(voteSpace, xMin, yMin, numFeatures);
 	}
 
 	/**

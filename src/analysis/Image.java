@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import main.Graph;
 
@@ -189,92 +190,6 @@ public class Image {
 	}
 
 	/**
-	 * Find the maximum points in the image. It turns the points into their actual real world values, and will not return points which are too close
-	 * together. In the case of close together points it will return the maximum point. In some cases points which are just beyond too close together
-	 * may also only have the maximum value returned.
-	 *
-	 * @param image
-	 *            The image to find points in
-	 * @param minAngle
-	 *            Offset from first array index to actual value
-	 * @param minDistance
-	 *            Offset from second array index to actual value
-	 * @param tooCloseDist
-	 *            Min distance between second array indicies allowed
-	 * @param tooCloseAngle
-	 *            Min distance between first array indicies allowed
-	 * @param numPoints
-	 *            Maximum number of points to return
-	 * @param numDeg
-	 *            Number of real values one step in the first array index represents
-	 * @param numPix
-	 *            Number of real value one step in the second array index represents
-	 * @return Up to numPoints points representing the maxima in the image.
-	 */
-	public static List<Point> findMax(double[][] image, double minAngle, double minDistance, double tooCloseAngle, double tooCloseDist,
-			int numPoints, int numDeg, int numPix) {
-		List<Point> p = new ArrayList<>();
-
-		List<Pair<Integer, Integer>> best = new ArrayList<>();
-		PeakComparator comp = new PeakComparator(image, tooCloseDist, tooCloseAngle);
-
-		best.add(new Pair<>(0, 0));
-
-		for (int i = 0; i < image.length; i++) {
-			loopy: for (int j = 0; j < image[i].length; j++) {
-				Pair<Integer, Integer> thisPoint = new Pair<>(i, j);
-				boolean shouldBeAdded = best.size() < numPoints;
-				for (int k = 0; k < best.size(); k++) {
-					if (comp.compare(best.get(k), thisPoint) < 0) {
-						if (comp.tooClose(best.get(k), thisPoint)) {
-							shouldBeAdded = false;
-							best.set(k, thisPoint);
-							continue loopy;
-						}
-						shouldBeAdded = true;
-					} else if (comp.tooClose(best.get(k), thisPoint)) {
-						shouldBeAdded = false;
-						continue loopy;
-					}
-				}
-				if (shouldBeAdded) {
-					best.add(thisPoint);
-				}
-			}
-			Collections.sort(best, comp);
-			Collections.reverse(best);
-			while (best.size() > 0 && (best.size() > numPoints || image[best.get(best.size() - 1).x][best.get(best.size() - 1).y] == 0)) {
-				best.remove(best.size() - 1);
-			}
-		}
-
-		// boolean bad = false;
-		// for(int i = 0; i < best.size(); i++){
-		// for(int j = i+1; j < best.size(); j++){
-		// if(comp.tooClose(best.get(i), best.get(j))){
-		// bad = true;
-		// }
-		// }
-		// }
-		// System.err.println(bad);
-
-		// System.err.println();
-		// for(Pair<Integer,Integer> cp: best){
-		// System.err.println("(" + (cp.x + minAngle) + ", "+ (cp.y +
-		// minDistance) + ") -- " + image[(int) (cp.x)][(int) (cp.y)]);
-		// }
-
-		for (Pair<Integer, Integer> b : best) {
-			double angle = b.x * numDeg + (numDeg / 2) + minAngle;
-			double rad = b.y * numPix + (numPix / 2) + minDistance;
-
-			p.add(new Point(angle, rad));
-		}
-
-		return p;
-	}
-
-	/**
 	 * Reduce the size of the image. This merges cells from the top left. Each cell is combined as a linear sum. This preserves the original image.
 	 *
 	 * @param image
@@ -414,8 +329,8 @@ public class Image {
 
 		if (type == MIRROR) {
 			drawMirrorLines(out, axis, minx, miny);
-		}else if(type == ROTATION){
-			drawRotationCenters(out,axis);
+		} else if (type == ROTATION) {
+			drawRotationCenters(out, axis);
 		}
 
 		out.printf("</svg>");
@@ -423,9 +338,9 @@ public class Image {
 
 	}
 
-	private static void drawRotationCenters(PrintStream out, List<Point> centers){
-		for(Point p : centers){
-			out.printf("<circle cx=\"%d\" cy=\"%d\" r=\"10\" stroke=\"yellow\" fill=\"yellow\" />\n", (int)p.x(), (int)p.y());
+	private static void drawRotationCenters(PrintStream out, List<Point> centers) {
+		for (Point p : centers) {
+			out.printf("<circle cx=\"%d\" cy=\"%d\" r=\"10\" stroke=\"yellow\" fill=\"yellow\" />\n", (int) p.x(), (int) p.y());
 		}
 	}
 
@@ -476,31 +391,31 @@ public class Image {
 		/**
 		 * The image that coordinates are samples from
 		 */
-		private final double[][] image;
+		private final Map<Pair<Integer, Integer>, Double> votes;
 		/**
 		 * Limits of how close points are allowed to be
 		 */
-		private final double limitDist, limitAngle;
+		private final double limitX, limitY;
 
 		/**
 		 * Create a compartor for a given image with fixed limits
 		 *
-		 * @param image
+		 * @param cotes
 		 *            The image to compare points from
 		 * @param limitDist
 		 *            Closest distance in second array dimension
 		 * @param limitAngle
 		 *            Closest distance in first array dimension
 		 */
-		public PeakComparator(double[][] image, double limitDist, double limitAngle) {
-			this.image = image;
-			this.limitDist = limitDist;
-			this.limitAngle = limitAngle;
+		public PeakComparator(Map<Pair<Integer, Integer>, Double> votes, double limitX, double limitY) {
+			this.votes = votes;
+			this.limitX = limitX;
+			this.limitY = limitY;
 		}
 
 		@Override
 		public int compare(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
-			return Double.compare(image[o1.x][o1.y], image[o2.x][o2.y]);
+			return Double.compare(votes.get(o1), votes.get(o2));
 		}
 
 		/**
@@ -513,7 +428,66 @@ public class Image {
 		 * @return True if they are too close
 		 */
 		public boolean tooClose(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
-			return Math.abs(o1.x - o2.x) < limitAngle && Math.abs(o1.y - o2.y) < limitDist;
+			return Math.abs(o1.x - o2.x) < limitX && Math.abs(o1.y - o2.y) < limitY;
 		}
+	}
+
+	public static List<Point> findMax(Map<Pair<Integer, Integer>, Double> voteSpace, int tooCloseX, int tooCloseY, int numFeatures) {
+		List<Point> p = new ArrayList<>();
+
+		List<Pair<Integer, Integer>> best = new ArrayList<>();
+		PeakComparator comp = new PeakComparator(voteSpace, tooCloseX, tooCloseY);
+
+		outer: for (Map.Entry<Pair<Integer, Integer>, Double> e : voteSpace.entrySet()) {
+			Pair<Integer, Integer> thisPoint = e.getKey();
+			boolean shouldBeAdded = best.size() < numFeatures;
+			for (int k = 0; k < best.size(); k++) {
+				if (comp.compare(best.get(k), thisPoint) < 0) {
+					if (comp.tooClose(best.get(k), thisPoint)) {
+						shouldBeAdded = false;
+						best.set(k, thisPoint);
+						continue outer;
+					}
+					shouldBeAdded = true;
+				} else if (comp.tooClose(best.get(k), thisPoint)) {
+					shouldBeAdded = false;
+					continue outer;
+				}
+			}
+			if (shouldBeAdded) {
+				best.add(thisPoint);
+			}
+		}
+
+		Collections.sort(best, comp);
+		Collections.reverse(best);
+		while (best.size() > 0 && (best.size() > numFeatures || voteSpace.get(best.get(best.size() - 1)) == 0)) {
+			best.remove(best.size() - 1);
+		}
+
+		// boolean bad = false;
+		// for(int i = 0; i < best.size(); i++){
+		// for(int j = i+1; j < best.size(); j++){
+		// if(comp.tooClose(best.get(i), best.get(j))){
+		// bad = true;
+		// }
+		// }
+		// }
+		// System.err.println(bad);
+
+		// System.err.println();
+		// for(Pair<Integer,Integer> cp: best){
+		// System.err.println("(" + (cp.x + minAngle) + ", "+ (cp.y +
+		// minDistance) + ") -- " + image[(int) (cp.x)][(int) (cp.y)]);
+		// }
+
+		for (Pair<Integer, Integer> b : best) {
+			double angle = b.x;
+			double rad = b.y;
+
+			p.add(new Point(angle, rad));
+		}
+
+		return p;
 	}
 }
