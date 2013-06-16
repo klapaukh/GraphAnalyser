@@ -1,4 +1,5 @@
 package analysis;
+
 import main.Graph;
 
 public interface Analysis {
@@ -101,6 +102,53 @@ public interface Analysis {
 		}
 	}
 
+	public class AverageVertexDistance implements Analysis {
 
+		public String toString() {
+			return "Average Vertex Distance";
+		}
+
+		private static double computeMean(Graph g) {
+			double total = 0;
+			int count = 0;
+			for (int i = 0; i < g.numNodes(); i++) {
+				for (int j = i + 1; j < g.numNodes(); j++) {
+					total += g.distanceBetween(i, j);
+					count++;
+				}
+			}
+			if (count == 0) {
+				return 0;
+			}
+			return total / (double) count;
+		}
+
+		public String value(Graph g) {
+			return String.format("%.4f", computeMean(g));
+		}
+	}
+
+	public class CorrectedStandardDeviationOfVertexDistance implements Analysis {
+		public String toString() {
+			return "Corrected Standard Deviation of Vertex Distance";
+		}
+
+		public String value(Graph g) {
+			double total = 0;
+			int count = 0;
+			double mean = AverageVertexDistance.computeMean(g);
+			for (int i = 0; i < g.numNodes(); i++) {
+				for (int j = i + 1; j < g.numNodes(); j++) {
+					total += Math.pow(g.distanceBetween(i, j) - mean, 2);
+					count++;
+				}
+			}
+			if (count == 0) {
+				return "0";
+			}
+			total = Math.sqrt(total / (double) (count - 1));
+			return String.format("%.4f", total);
+		}
+	}
 
 }
