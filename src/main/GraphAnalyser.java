@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import analysis.Analysis;
+import analysis.EdgeCrossings;
 import analysis.MirrorSymmetry;
 import analysis.RotationalSymmetry;
 import analysis.TranslationalSymmetry;
@@ -54,6 +55,9 @@ public class GraphAnalyser {
 		tests.add(new MirrorSymmetry       (0.1, 2, false,4,5,5,10,10));
 		tests.add(new TranslationalSymmetry(0.1, 2, false,4,5,5,10,10));
 		tests.add(new RotationalSymmetry   (0.1, 2, false,4,5,5,10,10));
+		tests.add(new Analysis.AverageVertexDistance());
+		tests.add(new Analysis.CorrectedStandardDeviationOfVertexDistance());
+		tests.add(new EdgeCrossings());
 
 		List<Graph> graphs = new ArrayList<>();
 		try {
