@@ -5,7 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import analysis.Analysis;
+import analysis.AverageEdgeLength;
+import analysis.AverageVertexDistance;
+import analysis.CorrectedStandardDeviationOfEdgeLength;
+import analysis.CorrectedStandardDeviationOfVertexDistance;
+import analysis.DeviationFromIdealAngle;
 import analysis.EdgeCrossings;
+import analysis.GraphName;
+import analysis.LayoutProperty;
 import analysis.MirrorSymmetry;
 import analysis.RotationalSymmetry;
 import analysis.TranslationalSymmetry;
@@ -32,32 +39,34 @@ public class GraphAnalyser {
 		}
 
 		List<Analysis> tests = new ArrayList<>();
-		tests.add(new Analysis.AverageEdgeLength());
-		tests.add(new Analysis.CorrectedStandardDeviationOfEdgeLength());
-		tests.add(new Analysis.GraphName());
-		tests.add(new Analysis.LayoutProperty(Analysis.ELAPSED_TIME));
-		tests.add(new Analysis.LayoutProperty(Analysis.WIDTH));
-		tests.add(new Analysis.LayoutProperty(Analysis.HEIGHT));
-		tests.add(new Analysis.LayoutProperty(Analysis.ITERATIONS));
-		tests.add(new Analysis.LayoutProperty(Analysis.FORCEMODE));
-		tests.add(new Analysis.LayoutProperty(Analysis.KE));
-		tests.add(new Analysis.LayoutProperty(Analysis.KH));
-		tests.add(new Analysis.LayoutProperty(Analysis.KL));
-		tests.add(new Analysis.LayoutProperty(Analysis.KW));
-		tests.add(new Analysis.LayoutProperty(Analysis.MASS));
-		tests.add(new Analysis.LayoutProperty(Analysis.TIME));
-		tests.add(new Analysis.LayoutProperty(Analysis.COEFFICIENTOFRESTITUTION));
-		tests.add(new Analysis.LayoutProperty(Analysis.MUS));
-		tests.add(new Analysis.LayoutProperty(Analysis.MUK));
-		tests.add(new Analysis.LayoutProperty(Analysis.KG));
-		tests.add(new Analysis.LayoutProperty(Analysis.WELLMASS));
-		tests.add(new Analysis.LayoutProperty(Analysis.EDGECHARGE));
+
+		tests.add(new GraphName());
+		tests.add(new LayoutProperty(Analysis.ELAPSED_TIME));
+		tests.add(new LayoutProperty(Analysis.WIDTH));
+		tests.add(new LayoutProperty(Analysis.HEIGHT));
+		tests.add(new LayoutProperty(Analysis.ITERATIONS));
+		tests.add(new LayoutProperty(Analysis.FORCEMODE));
+		tests.add(new LayoutProperty(Analysis.KE));
+		tests.add(new LayoutProperty(Analysis.KH));
+		tests.add(new LayoutProperty(Analysis.KL));
+		tests.add(new LayoutProperty(Analysis.KW));
+		tests.add(new LayoutProperty(Analysis.MASS));
+		tests.add(new LayoutProperty(Analysis.TIME));
+		tests.add(new LayoutProperty(Analysis.COEFFICIENTOFRESTITUTION));
+		tests.add(new LayoutProperty(Analysis.MUS));
+		tests.add(new LayoutProperty(Analysis.MUK));
+		tests.add(new LayoutProperty(Analysis.KG));
+		tests.add(new LayoutProperty(Analysis.WELLMASS));
+		tests.add(new LayoutProperty(Analysis.EDGECHARGE));
 		tests.add(new MirrorSymmetry       (0.1, 2, false,4,5,5,10,10));
 		tests.add(new TranslationalSymmetry(0.1, 2, false,4,5,5,10,10));
 		tests.add(new RotationalSymmetry   (0.1, 2, false,4,5,5,10,10));
-		tests.add(new Analysis.AverageVertexDistance());
-		tests.add(new Analysis.CorrectedStandardDeviationOfVertexDistance());
+		tests.add(new AverageVertexDistance());
+		tests.add(new CorrectedStandardDeviationOfVertexDistance());
+		tests.add(new AverageEdgeLength());
+		tests.add(new CorrectedStandardDeviationOfEdgeLength());
 		tests.add(new EdgeCrossings());
+		tests.add(new DeviationFromIdealAngle());
 
 		List<Graph> graphs = new ArrayList<>();
 		try {

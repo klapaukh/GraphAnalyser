@@ -2,7 +2,7 @@ package analysis;
 
 import main.Graph;
 
-public class EdgeCrossings implements Analysis {
+public class EdgeCrossings extends Analysis {
 
 	public String toString() {
 		return "Edge Crossings";

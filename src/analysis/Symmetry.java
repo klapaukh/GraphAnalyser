@@ -14,7 +14,7 @@ import main.Graph;
  * @author Roma Klapaukh
  *
  */
-public abstract class Symmetry implements Analysis {
+public abstract class Symmetry extends Analysis {
 	private final double sigma_scale;
 	private final boolean distanceBound;
 	private final double sigma_distance;

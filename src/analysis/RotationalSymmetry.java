@@ -41,11 +41,6 @@ public class RotationalSymmetry extends Symmetry {
 						}
 					}
 
-					// There are is only one such line, the biscector of the joining line
-					// double angle = f1.p.angleToOtherFromXForward(f2.p) - Math.PI / 2;
-					// double angle = Math.atan((f1.p.x() - f2.p.x()) / (f1.p.y() - f2.p.y())) + Math.PI / 2;
-//					double angle = Math.acos((f2.p.x() - f1.p.x()) / f2.p.distanceTo(f1.p)) + Math.PI / 2;
-
 					Point a = new Point(1,0);
 					Point b = f2.p.minus(f1.p);
 					double angle = Math.atan2( a.x()*b.y() - a.y()*b.x(), a.x()*b.x() + a.y()*b.y() ) + Math.PI/2;
