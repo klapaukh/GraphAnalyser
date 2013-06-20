@@ -79,7 +79,7 @@ public class RotationalSymmetry extends Symmetry {
 					// Compute the radius
 					double r = dist / Math.tan(alpha);
 
-					if (Double.compare(r, 0) == 0) {
+					if (Double.compare(r, 0) == 0 || Double.compare(alpha, 0) == 0) {
 						votes.add(new Vote(offset.x(), offset.y(), vote, f1.node1, f1.node2, f2.node1, f2.node2));
 						continue;
 					}
