@@ -11,9 +11,12 @@ import analysis.CorrectedStandardDeviationOfEdgeLength;
 import analysis.CorrectedStandardDeviationOfVertexDistance;
 import analysis.DeviationFromIdealAngle;
 import analysis.EdgeCrossings;
+import analysis.ForcemodeString;
 import analysis.GraphName;
 import analysis.LayoutProperty;
 import analysis.MirrorSymmetry;
+import analysis.NumEdges;
+import analysis.NumNodes;
 import analysis.RotationalSymmetry;
 import analysis.TranslationalSymmetry;
 
@@ -41,6 +44,9 @@ public class GraphAnalyser {
 		List<Analysis> tests = new ArrayList<>();
 
 		tests.add(new GraphName());
+		tests.add(new NumNodes());
+		tests.add(new NumEdges());
+		tests.add(new ForcemodeString());
 		tests.add(new LayoutProperty(Analysis.ELAPSED_TIME));
 		tests.add(new LayoutProperty(Analysis.WIDTH));
 		tests.add(new LayoutProperty(Analysis.HEIGHT));
@@ -58,6 +64,7 @@ public class GraphAnalyser {
 		tests.add(new LayoutProperty(Analysis.KG));
 		tests.add(new LayoutProperty(Analysis.WELLMASS));
 		tests.add(new LayoutProperty(Analysis.EDGECHARGE));
+		tests.add(new LayoutProperty(Analysis.FINALKINETICENERGY));
 		tests.add(new MirrorSymmetry       (0.1, 2, false,4,5,5,10,10));
 		tests.add(new TranslationalSymmetry(0.1, 2, false,4,5,5,10,10));
 		tests.add(new RotationalSymmetry   (0.1, 2, false,4,5,5,10,10));
