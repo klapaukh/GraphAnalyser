@@ -8,7 +8,7 @@ import main.Graph;
 public class DeviationFromIdealAngle extends Analysis {
 
 	public String toString() {
-		return "Angle deviation from ideal";
+		return "Angle Deviation From Ideal";
 	}
 
 	public String value(Graph g) {
