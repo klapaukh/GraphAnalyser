@@ -163,7 +163,7 @@ public abstract class Symmetry extends Analysis {
 		int numEdgesMatched = 0;
 		int numEdges = 0;
 		for (int i = 0; i < g.numNodes(); i++) {
-			for (int j = i + 1; j < g.numNodes(); j++) {
+			edge: for (int j = i + 1; j < g.numNodes(); j++) {
 				if (g.isEdge(i, j)) {
 					numEdges++;
 					// What was my vote
@@ -173,6 +173,7 @@ public abstract class Symmetry extends Analysis {
 								if (Math.abs(p.x() - v.x) < xMin
 										&& Math.abs(p.y() - v.y) < yMin) {
 									numEdgesMatched++;
+									continue edge;
 								}
 							}
 						}
