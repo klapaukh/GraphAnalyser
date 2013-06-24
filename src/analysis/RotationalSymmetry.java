@@ -41,9 +41,9 @@ public class RotationalSymmetry extends Symmetry {
 						}
 					}
 
-					Point a = new Point(1,0);
+					Point a = new Point(1, 0);
 					Point b = f2.p.minus(f1.p);
-					double angle = Math.atan2( a.x()*b.y() - a.y()*b.x(), a.x()*b.x() + a.y()*b.y() ) + Math.PI/2;
+					double angle = Math.atan2(a.x() * b.y() - a.y() * b.x(), a.x() * b.x() + a.y() * b.y()) + Math.PI / 2;
 
 					Point testDir = new Point(angle);
 
@@ -79,7 +79,7 @@ public class RotationalSymmetry extends Symmetry {
 					// Compute the radius
 					double r = dist / Math.tan(alpha);
 
-					if (Double.compare(r, 0) == 0 || Double.compare(alpha, 0) == 0) {
+					if (Double.compare(Math.abs(r), 0.001) < 0 || Double.compare(Math.abs(alpha), 0.5) < 0 || Double.compare(Math.abs(alpha-Math.PI),0.05) < 0) {
 						votes.add(new Vote(offset.x(), offset.y(), vote, f1.node1, f1.node2, f2.node1, f2.node2));
 						continue;
 					}
