@@ -189,21 +189,28 @@ public class Graph implements Iterable<Point> {
 			public Iterator<Pair<Point, Point>> iterator() {
 				return new Iterator<Pair<Point, Point>>() {
 
-					Graph g;
-					int i = -1, j = 1;
+					Graph g = Graph.this;
+					int i = -1, j = -1;
 					{
 						findNext();
 					}
 
 					@Override
 					public boolean hasNext() {
+						if(i >= g.numNodes() || j >= g.numNodes()){
+							return false;
+						}
 						return g.isEdge(i, j);
 					}
 
 					@Override
 					public Pair<Point, Point> next() {
+						if(i >= g.numNodes() || j >= g.numNodes()){
+							throw new RuntimeException("Edge out of bounds! " + i + " " + j);
+						}
+						Pair<Point,Point> r =  new Pair<Point, Point>(g.getNode(i), g.getNode(j));
 						findNext();
-						return new Pair<Point, Point>(g.getNode(i), g.getNode(j));
+						return r;
 					}
 
 					@Override
@@ -215,13 +222,14 @@ public class Graph implements Iterable<Point> {
 						if (i == -1) {
 							i = 0;
 						}
+						j+=1;
 						for (; i < g.numNodes(); i++) {
-							for (; j < g.numNodes(); i++) {
+							for (; j < g.numNodes(); j++) {
 								if (g.isEdge(i, j)) {
 									return;
 								}
 							}
-							j = i + 2;
+							j = i + 1;
 						}
 					}
 				};
