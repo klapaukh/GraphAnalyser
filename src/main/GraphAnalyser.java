@@ -5,12 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import analysis.Analysis;
-import analysis.AverageEdgeLength;
-import analysis.AverageVertexDistance;
-import analysis.CorrectedStandardDeviationOfEdgeLength;
-import analysis.CorrectedStandardDeviationOfVertexDistance;
 import analysis.DeviationFromIdealAngle;
 import analysis.EdgeCrossings;
+import analysis.EdgeLength;
 import analysis.ForcemodeString;
 import analysis.GraphName;
 import analysis.LayoutProperty;
@@ -19,6 +16,9 @@ import analysis.NumEdges;
 import analysis.NumNodes;
 import analysis.RotationalSymmetry;
 import analysis.TranslationalSymmetry;
+import analysis.UsedHeight;
+import analysis.UsedWidth;
+import analysis.VertexDistance;
 
 public class GraphAnalyser {
 
@@ -65,15 +65,18 @@ public class GraphAnalyser {
 		tests.add(new LayoutProperty(Analysis.WELLMASS));
 		tests.add(new LayoutProperty(Analysis.EDGECHARGE));
 		tests.add(new LayoutProperty(Analysis.FINALKINETICENERGY));
+		tests.add(new LayoutProperty(Analysis.NODEWIDTH));
+		tests.add(new LayoutProperty(Analysis.NODEHEIGHT));
+		tests.add(new LayoutProperty(Analysis.NODECHARGE));
 		tests.add(new MirrorSymmetry       (0.1, 2, false,4,5,5,10,10));
 		tests.add(new TranslationalSymmetry(0.1, 2, false,4,5,5,10,10));
 		tests.add(new RotationalSymmetry   (0.1, 2, false,4,5,5,10,10));
-		tests.add(new AverageVertexDistance());
-		tests.add(new CorrectedStandardDeviationOfVertexDistance());
-		tests.add(new AverageEdgeLength());
-		tests.add(new CorrectedStandardDeviationOfEdgeLength());
 		tests.add(new EdgeCrossings());
 		tests.add(new DeviationFromIdealAngle());
+		tests.add(new UsedWidth());
+		tests.add(new UsedHeight());
+		tests.add(new EdgeLength());
+		tests.add(new VertexDistance());
 
 		List<Graph> graphs = new ArrayList<>();
 		try {
