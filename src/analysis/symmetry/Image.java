@@ -443,28 +443,21 @@ public class Image {
 		PeakComparator comp = new PeakComparator(voteSpace, tooCloseX, tooCloseY);
 
 
-		outer: for (Pair<Integer, Integer> thisPoint : voteSpace.keySet()) {
-			boolean shouldBeAdded = best.size() < numFeatures;
-			for (int k = 0; k < best.size(); k++) {
-				if (comp.compare(best.get(k), thisPoint) < 0) {
-					if (comp.tooClose(best.get(k), thisPoint)) {
-						shouldBeAdded = false;
-						best.set(k, thisPoint);
-						continue outer;
-					}
-					shouldBeAdded = true;
-				} else if (comp.tooClose(best.get(k), thisPoint)) {
-					shouldBeAdded = false;
-					continue outer;
-				}
-			}
-			if (shouldBeAdded) {
-				best.add(thisPoint);
-			}
+		for (Pair<Integer, Integer> thisPoint : voteSpace.keySet()) {
+			best.add(thisPoint);
 		}
 
 		Collections.sort(best, comp);
 		Collections.reverse(best);
+
+		for(int i = 0 ; i < numFeatures && i < best.size(); i++){
+			for (int j = i+1; j < best.size(); j++) {
+				if (comp.tooClose(best.get(i), best.get(j))) {
+					best.remove(j);
+				}
+			}
+		}
+
 		while (best.size() > 0 && (best.size() > numFeatures || voteSpace.get(best.get(best.size() - 1)) == 0)) {
 			best.remove(best.size() - 1);
 		}
