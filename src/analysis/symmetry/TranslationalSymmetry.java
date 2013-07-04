@@ -1,9 +1,11 @@
-package analysis;
+package analysis.symmetry;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 import main.Graph;
+import main.Point;
 
 public class TranslationalSymmetry extends Symmetry {
 

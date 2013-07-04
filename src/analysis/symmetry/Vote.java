@@ -1,4 +1,4 @@
-package analysis;
+package analysis.symmetry;
 
 public class Vote {
 	public final double y, x, vote;

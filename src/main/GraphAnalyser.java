@@ -1,4 +1,6 @@
 package main;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -7,18 +9,19 @@ import java.util.List;
 import analysis.Analysis;
 import analysis.DeviationFromIdealAngle;
 import analysis.EdgeCrossings;
-import analysis.EdgeLength;
 import analysis.ForcemodeString;
 import analysis.GraphName;
 import analysis.LayoutProperty;
-import analysis.MirrorSymmetry;
 import analysis.NumEdges;
 import analysis.NumNodes;
-import analysis.RotationalSymmetry;
-import analysis.TranslationalSymmetry;
 import analysis.UsedHeight;
 import analysis.UsedWidth;
-import analysis.VertexDistance;
+import analysis.lists.EdgeLength;
+import analysis.lists.NodeDegree;
+import analysis.lists.VertexDistance;
+import analysis.symmetry.MirrorSymmetry;
+import analysis.symmetry.RotationalSymmetry;
+import analysis.symmetry.TranslationalSymmetry;
 
 public class GraphAnalyser {
 
@@ -35,7 +38,7 @@ public class GraphAnalyser {
 	public static final long WRAP_AROUND_FORCES = 1 << 10;
 
 	public static void main(String args[]) {
-		if (args.length != 1) {
+		if (args.length < 1 || args.length > 2) {
 			System.out.println("Incorrect usage.");
 			System.out.println("java GraphAnalyser file.svg");
 			System.exit(-1);
@@ -68,24 +71,28 @@ public class GraphAnalyser {
 		tests.add(new LayoutProperty(Analysis.NODEWIDTH));
 		tests.add(new LayoutProperty(Analysis.NODEHEIGHT));
 		tests.add(new LayoutProperty(Analysis.NODECHARGE));
-		tests.add(new MirrorSymmetry       (0.1, 2, false,4,5,5,10,10));
-		tests.add(new TranslationalSymmetry(0.1, 2, false,4,5,5,10,10));
-		tests.add(new RotationalSymmetry   (0.1, 2, false,4,5,5,10,10));
+		tests.add(new MirrorSymmetry(0.1, 2, false, 4, 5, 5, 10, 10));
+		tests.add(new TranslationalSymmetry(0.1, 2, false, 4, 5, 5, 10, 10));
+		tests.add(new RotationalSymmetry(0.1, 2, false, 4, 5, 5, 10, 10));
 		tests.add(new EdgeCrossings());
 		tests.add(new DeviationFromIdealAngle());
 		tests.add(new UsedWidth());
 		tests.add(new UsedHeight());
 		tests.add(new EdgeLength());
 		tests.add(new VertexDistance());
+		tests.add(new NodeDegree());
 
-		List<Graph> graphs = new ArrayList<>();
-		try {
-			Graph g = new Graph(args[0]);
-			graphs.add(g);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Problem loading file - Terminating");
-			System.exit(-1);
+		List<String> graphs = new ArrayList<>();
+		if (args.length == 1) {
+			graphs.add(args[0]);
+		} else {
+			File dir = new File(args[0]);
+			if (!dir.exists() || !dir.isDirectory()) {
+				System.out.println("There is no directory: " + args[0]);
+				System.exit(-1);
+			}
+			String match = args[1];
+			addAllFiles(dir, match, graphs);
 		}
 
 		PrintStream out = System.out;
@@ -99,14 +106,33 @@ public class GraphAnalyser {
 		out.println();
 
 		// Print out a line per graph
-		for (Graph g : graphs) {
-			for (int i = 0; i < tests.size(); i++) {
-				out.print(tests.get(i).value(g));
-				if (i < tests.size() - 1) {
-					out.print(",");
+		for (String fname : graphs) {
+			Graph g;
+			try {
+				g = new Graph(fname);
+				for (int i = 0; i < tests.size(); i++) {
+					out.print(tests.get(i).value(g));
+					if (i < tests.size() - 1) {
+						out.print(",");
+					}
 				}
+				out.println();
+			} catch (IOException e) {
+				//Any graph might be a trap and fail
+				System.err.println("Failed to read file " + fname);
+				e.printStackTrace();
 			}
-			out.println();
+		}
+	}
+
+	private static void addAllFiles(File dir, String match, List<String> graphs) {
+		File[] filesInDir = dir.listFiles();
+		for (File f : filesInDir) {
+			if (f.isDirectory()) {
+				addAllFiles(f, match, graphs);
+			} else if (f.toString().matches(match)) {
+				graphs.add(f.toString());
+			}
 		}
 	}
 }

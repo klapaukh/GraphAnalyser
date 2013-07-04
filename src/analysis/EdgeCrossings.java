@@ -1,6 +1,7 @@
 package analysis;
 
 import main.Graph;
+import main.Point;
 
 public class EdgeCrossings extends Analysis {
 

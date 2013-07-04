@@ -1,11 +1,15 @@
-package analysis;
+package analysis.symmetry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import analysis.Analysis;
+
 import main.Graph;
+import main.Pair;
+import main.Point;
 
 /**
  * This class is the commmon computations needed to implement the different

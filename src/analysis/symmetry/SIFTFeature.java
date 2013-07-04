@@ -1,4 +1,6 @@
-package analysis;
+package analysis.symmetry;
+
+import main.Point;
 
 
 public class SIFTFeature {

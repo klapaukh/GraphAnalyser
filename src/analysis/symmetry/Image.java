@@ -1,4 +1,4 @@
-package analysis;
+package analysis.symmetry;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,7 +9,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import analysis.Analysis;
+
 import main.Graph;
+import main.Pair;
+import main.Point;
 
 /**
  * This class contains methods for manipulating 2D arrays of doubles as if they were grey scale images. It contains much of the common code needed by
@@ -438,8 +442,8 @@ public class Image {
 		List<Pair<Integer, Integer>> best = new ArrayList<>();
 		PeakComparator comp = new PeakComparator(voteSpace, tooCloseX, tooCloseY);
 
-		outer: for (Map.Entry<Pair<Integer, Integer>, Double> e : voteSpace.entrySet()) {
-			Pair<Integer, Integer> thisPoint = e.getKey();
+
+		outer: for (Pair<Integer, Integer> thisPoint : voteSpace.keySet()) {
 			boolean shouldBeAdded = best.size() < numFeatures;
 			for (int k = 0; k < best.size(); k++) {
 				if (comp.compare(best.get(k), thisPoint) < 0) {
@@ -464,22 +468,6 @@ public class Image {
 		while (best.size() > 0 && (best.size() > numFeatures || voteSpace.get(best.get(best.size() - 1)) == 0)) {
 			best.remove(best.size() - 1);
 		}
-
-		// boolean bad = false;
-		// for(int i = 0; i < best.size(); i++){
-		// for(int j = i+1; j < best.size(); j++){
-		// if(comp.tooClose(best.get(i), best.get(j))){
-		// bad = true;
-		// }
-		// }
-		// }
-		// System.err.println(bad);
-
-		// System.err.println();
-		// for(Pair<Integer,Integer> cp: best){
-		// System.err.println("(" + (cp.x + minAngle) + ", "+ (cp.y +
-		// minDistance) + ") -- " + image[(int) (cp.x)][(int) (cp.y)]);
-		// }
 
 		for (Pair<Integer, Integer> b : best) {
 			double angle = b.x;

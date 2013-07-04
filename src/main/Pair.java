@@ -1,4 +1,4 @@
-package analysis;
+package main;
 
 /**
  * This class represents a generic immutable pair type.

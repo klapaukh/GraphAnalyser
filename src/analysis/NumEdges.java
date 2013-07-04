@@ -1,6 +1,8 @@
 package analysis;
 
 import main.Graph;
+import main.Pair;
+import main.Point;
 
 public class NumEdges extends Analysis {
 

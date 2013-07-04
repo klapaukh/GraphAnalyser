@@ -1,4 +1,4 @@
-package analysis;
+package main;
 
 /**
  * This class represents a simple immutable 2D point.

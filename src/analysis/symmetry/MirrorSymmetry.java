@@ -1,10 +1,10 @@
-package analysis;
+package analysis.symmetry;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import main.Graph;
+import main.Point;
 
 public class MirrorSymmetry extends Symmetry {
 
@@ -64,12 +64,12 @@ public class MirrorSymmetry extends Symmetry {
 
 		List<Point> axis = findMaxima(votes);
 
-		try {
-			Image.drawSVG(g, axis, votes, "mirror.svg", xMin, yMin, Image.MIRROR);
-		} catch (FileNotFoundException e) {
-			// Don't really care too much if this fails
-			e.printStackTrace();
-		}
+//		try {
+//			Image.drawSVG(g, axis, votes, "mirror.svg", xMin, yMin, Image.MIRROR);
+//		} catch (FileNotFoundException e) {
+//			// Don't really care too much if this fails
+//			e.printStackTrace();
+//		}
 
 		double score = computeScore(g, axis, votes);
 		return String.format("%.4f", score);
