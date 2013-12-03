@@ -1,14 +1,23 @@
 package analysis.lists;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import main.Graph;
 
 public class NodeDegree extends ListAnalysis {
+	private final boolean reportFull;
+
+	public NodeDegree(boolean reportFull) {
+		this.reportFull = reportFull;
+	}
 
 	public String toString() {
-		return "Node Degree";
+		if (reportFull) {
+			return "Node Degree";
+		}
+		return "Mean Node Degree,Median Node Degree,Max Node Degree,Min Node Degree";
 	}
 
 	@Override
@@ -21,8 +30,11 @@ public class NodeDegree extends ListAnalysis {
 			}
 			degree.add(count);
 		}
-
-		return toRVector(degree);
+		Collections.sort(degree);
+		if(reportFull){
+			return toRVector(degree);
+		}
+		return String.format("%.4f,%.4f,%d,%d",mean(degree),median(degree), degree.get(degree.size()-1),degree.get(0));
 	}
 
 }

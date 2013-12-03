@@ -1,14 +1,24 @@
 package analysis.lists;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import main.Graph;
 
 public class VertexDistance extends ListAnalysis {
 
+	private final boolean reportFull;
+
+	public VertexDistance(boolean reportFull){
+		this.reportFull = reportFull;
+	}
+
 	public String toString() {
-		return "Vertex Distance";
+		if(reportFull){
+			return "Vertex Distance";
+		}
+		return "Mean Vertex Distance,Median Vertex Distance,Max Vertex Distance,Min Vertex Distance";
 	}
 
 	@Override
@@ -19,7 +29,11 @@ public class VertexDistance extends ListAnalysis {
 				lengths.add(g.distanceBetween(i, j));
 			}
 		}
-		return toRVector(lengths);
+		Collections.sort(lengths);
+		if(reportFull){
+			return String.format("%.4f",toRVector(lengths));
+		}
+		return String.format("%.4f,%.4f,%.4f,%.4f",mean(lengths),median(lengths),lengths.get(lengths.size()-1),lengths.get(0));
 	}
 
 }
