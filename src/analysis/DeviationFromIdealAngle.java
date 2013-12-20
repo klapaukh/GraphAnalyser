@@ -62,10 +62,7 @@ public class DeviationFromIdealAngle extends Analysis {
 						Point a = p2.minus(p);
 						Point b = p3.minus(p);
 
-						double theta = Math.atan2(a.x() * b.y() - a.y() * b.x(), a.x() * b.x() + a.y() * b.y());
-						if (theta < 0) {
-							theta = 2 * Math.PI + theta;
-						}
+						double theta = Math.abs(a.angleToOtherFromX(b));
 						minTheta = Math.min(theta, minTheta);
 					}
 					d += Math.abs((idealAngle - minTheta) / idealAngle);
