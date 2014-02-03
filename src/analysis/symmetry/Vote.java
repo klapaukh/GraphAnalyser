@@ -34,4 +34,7 @@ public class Vote {
 		this.j2 = j2;
 	}
 
+	public String toString(){
+		return String.format("(%.0f,%.0f,%.2f)",x,y,vote);
+	}
 }
