@@ -28,11 +28,9 @@ import main.Point;
 
 public class MirrorSymmetry extends Symmetry {
 
-	public MirrorSymmetry(double sigma_scale, double sigma_distance,
-			boolean useDistanceWeighting, int numMirrors, int angleMerge,
-			int pixelMerge, int xMin, int yMin) {
-		super(sigma_scale, useDistanceWeighting, sigma_distance, numMirrors,
-				angleMerge, pixelMerge, xMin, yMin);
+	public MirrorSymmetry(double sigma_scale, double sigma_distance, boolean useDistanceWeighting, int numMirrors, int angleMerge, int pixelMerge,
+			int xMin, int yMin) {
+		super(sigma_scale, useDistanceWeighting, sigma_distance, numMirrors, angleMerge, pixelMerge, xMin, yMin);
 	}
 
 	public String toString() {
@@ -58,38 +56,46 @@ public class MirrorSymmetry extends Symmetry {
 					double thetaij = f1.angleToForwards(f2);
 					Point mid = f1.midPointTo(f2);
 
-					double rij = mid.x() * Math.cos(thetaij) + mid.y()
-							* Math.sin(thetaij);
+					double rij = mid.x() * Math.cos(thetaij) + mid.y() * Math.sin(thetaij);
 
 					double vote = phi * s * d;
 
-					votes.add(new Vote(Math.toDegrees(thetaij), rij, vote,
-							f1.node1, f1.node2, f2.node1, f2.node2));
+					votes.add(new Vote(Math.toDegrees(thetaij), rij, vote, f1.node1, f1.node2, f2.node1, f2.node2));
 				}
 			}
-			//And also around the edge itself
-			double thetaij = g.getNode(f1.node1).angleToOtherFromXForward(g.getNode(f1.node2));
+
+			// And perpendular bisector
+			double thetaij = g.getNode(f1.node1).angleToOtherFromXForward(g.getNode(f1.node2))+ Math.PI;
 			Point mid = g.getNode(f1.node1).midPointTo(g.getNode(f1.node2));
 
-			double rij = mid.x() * Math.cos(thetaij) + mid.y()
-					* Math.sin(thetaij);
+			double rij = mid.x() * Math.cos(thetaij) + mid.y() * Math.sin(thetaij);
 
-			//This is obviously a great line for me!
+			// This is obviously a great line for me!
 			double vote = 1;
 
-			votes.add(new Vote(Math.toDegrees(thetaij), rij, vote,
-					f1.node1, f1.node2, f1.node1, f1.node2));
-			}
+			votes.add(new Vote(Math.toDegrees(thetaij), rij, vote, f1.node1, f1.node2, f1.node1, f1.node2));
 
+			//parallel to the edge
+			thetaij = g.getNode(f1.node1).angleToOtherFromXForward(g.getNode(f1.node2));
+			mid = g.getNode(f1.node1).midPointTo(g.getNode(f1.node2));
+
+			rij = mid.x() * Math.cos(thetaij) + mid.y() * Math.sin(thetaij);
+
+			// This is obviously a great line for me!
+			vote = 1;
+
+			votes.add(new Vote(Math.toDegrees(thetaij), rij, vote, f1.node1, f1.node2, f1.node1, f1.node2));
+
+		}
 
 		List<Point> axis = findMaxima(votes);
 
-//		try {
-//			Image.drawSVG(g, axis, votes, "mirror.svg", xMin, yMin, Image.MIRROR);
-//		} catch (FileNotFoundException e) {
-//			// Don't really care too much if this fails
-//			e.printStackTrace();
-//		}
+		// try {
+		// Image.drawSVG(g, axis, votes, "mirror.svg", xMin, yMin, Image.MIRROR);
+		// } catch (FileNotFoundException e) {
+		// // Don't really care too much if this fails
+		// e.printStackTrace();
+		// }
 
 		double score = computeScore(g, axis, votes);
 		return String.format("%.4f", score);
