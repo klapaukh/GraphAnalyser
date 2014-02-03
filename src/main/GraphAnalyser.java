@@ -22,7 +22,6 @@ package main;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,9 +101,19 @@ public class GraphAnalyser {
 		tests.add(new VertexDistance(false));
 		tests.add(new NodeDegree(false));
 
-		List<String> graphs = new ArrayList<>();
+
+		// Print header line
+		for (int i = 0; i < tests.size(); i++) {
+			System.out.print(tests.get(i));
+			if (i < tests.size() - 1) {
+				System.out.print(",");
+			}
+		}
+		System.out.println();
+
 		if (args.length == 1) {
-			graphs.add(args[0]);
+			// Just do the one file.
+			evaluateGraph(args[0],tests);
 		} else {
 			File dir = new File(args[0]);
 			if (!dir.exists() || !dir.isDirectory()) {
@@ -112,47 +121,38 @@ public class GraphAnalyser {
 				System.exit(-1);
 			}
 			String match = args[1];
-			addAllFiles(dir, match, graphs);
+			evaluateAllFiles(dir, match,tests);
 		}
 
-		PrintStream out = System.out;
-		// Print header line
-		for (int i = 0; i < tests.size(); i++) {
-			out.print(tests.get(i));
-			if (i < tests.size() - 1) {
-				out.print(",");
-			}
-		}
-		out.println();
 
-		// Print out a line per graph
-		for (String fname : graphs) {
-			Graph g;
-			try {
-				g = new Graph(fname);
-				for (int i = 0; i < tests.size(); i++) {
-					out.print(tests.get(i).value(g));
-					if (i < tests.size() - 1) {
-						out.print(",");
-					}
-				}
-				out.println();
-			} catch (IOException e) {
-				//Any graph might be a trap and fail
-				System.err.println("Failed to read file " + fname);
-				e.printStackTrace();
+	}
+
+	private static void evaluateAllFiles(File dir, String match, List<Analysis> tests) {
+		File[] filesInDir = dir.listFiles();
+		for (File f : filesInDir) {
+			if (f.isDirectory()) {
+				evaluateAllFiles(f, match,tests);
+			} else if (f.toString().matches(match)) {
+				// Print out a line per graph
+				evaluateGraph(f.toString(), tests);
 			}
 		}
 	}
 
-	private static void addAllFiles(File dir, String match, List<String> graphs) {
-		File[] filesInDir = dir.listFiles();
-		for (File f : filesInDir) {
-			if (f.isDirectory()) {
-				addAllFiles(f, match, graphs);
-			} else if (f.toString().matches(match)) {
-				graphs.add(f.toString());
+	public static void evaluateGraph(String filename, List<Analysis> tests ){
+		try {
+			Graph g = new Graph(filename);
+			for (int i = 0; i < tests.size(); i++) {
+				System.out.print(tests.get(i).value(g));
+				if (i < tests.size() - 1) {
+					System.out.print(",");
+				}
 			}
+			System.out.println();
+		} catch (IOException e) {
+			//Any graph might be a trap and fail
+			System.err.println("Failed to read file " + filename);
+			e.printStackTrace();
 		}
 	}
 }
