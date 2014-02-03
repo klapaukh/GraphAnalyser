@@ -60,42 +60,34 @@ public class MirrorSymmetry extends Symmetry {
 
 					double vote = phi * s * d;
 
-					votes.add(new Vote(Math.toDegrees(thetaij), rij, vote, f1.node1, f1.node2, f2.node1, f2.node2));
+					votes.add(cannonicalVote(Math.toDegrees(thetaij), rij, vote, f1.node1, f1.node2, f2.node1, f2.node2));
 				}
 			}
 
-			// And perpendular bisector
-			double thetaij = g.getNode(f1.node1).angleToOtherFromXForward(g.getNode(f1.node2))+ Math.PI;
 			Point mid = g.getNode(f1.node1).midPointTo(g.getNode(f1.node2));
-
-			double rij = mid.x() * Math.cos(thetaij) + mid.y() * Math.sin(thetaij);
-
-			// This is obviously a great line for me!
 			double vote = 1;
+			double thetaij = g.getNode(f1.node1).angleToOtherFromXForward(g.getNode(f1.node2));
 
-			votes.add(new Vote(Math.toDegrees(thetaij), rij, vote, f1.node1, f1.node2, f1.node1, f1.node2));
+			// And perpendular bisector
+
+			double rij = mid.x() * Math.cos(thetaij + Math.PI /2 ) + mid.y() * Math.sin(thetaij+ Math.PI /2);
+			votes.add(cannonicalVote(Math.toDegrees(thetaij+ Math.PI / 2), rij, vote, f1.node1, f1.node2, f1.node1, f1.node2));
+
 
 			//parallel to the edge
-			thetaij = g.getNode(f1.node1).angleToOtherFromXForward(g.getNode(f1.node2));
-			mid = g.getNode(f1.node1).midPointTo(g.getNode(f1.node2));
-
 			rij = mid.x() * Math.cos(thetaij) + mid.y() * Math.sin(thetaij);
-
-			// This is obviously a great line for me!
-			vote = 1;
-
-			votes.add(new Vote(Math.toDegrees(thetaij), rij, vote, f1.node1, f1.node2, f1.node1, f1.node2));
+			votes.add(cannonicalVote(Math.toDegrees(thetaij), rij, vote, f1.node1, f1.node2, f1.node1, f1.node2));
 
 		}
 
 		List<Point> axis = findMaxima(votes);
 
-		// try {
-		// Image.drawSVG(g, axis, votes, "mirror.svg", xMin, yMin, Image.MIRROR);
-		// } catch (FileNotFoundException e) {
-		// // Don't really care too much if this fails
-		// e.printStackTrace();
-		// }
+//		 try {
+//		 Image.drawSVG(g, axis, votes, "mirror.svg", xMin, yMin, Image.MIRROR);
+//		 } catch (FileNotFoundException e) {
+//		 // Don't really care too much if this fails
+//		 e.printStackTrace();
+//		 }
 
 		double score = computeScore(g, axis, votes);
 		return String.format("%.4f", score);
@@ -104,6 +96,20 @@ public class MirrorSymmetry extends Symmetry {
 	private double rotFactor(SIFTFeature f1, SIFTFeature f2) {
 		double thetaij = f1.angleToForwards(f2);
 		return Math.abs(Math.cos(f1.theta + f2.theta - 2 * thetaij));
+	}
+
+	private Vote cannonicalVote(double degrees, double radius, double vote, int n1, int n2, int n3, int n4){
+		while(degrees < 0){
+			degrees += 360;
+		}
+		if(radius < 0){
+			radius *=-1;
+			degrees += 180;
+			while(degrees >= 360){
+				degrees -= 360;
+			}
+		}
+		return new Vote(degrees,radius, vote,n1,n2,n3,n4);
 	}
 
 }
