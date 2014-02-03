@@ -177,6 +177,13 @@ public class RotationalSymmetry extends Symmetry {
 					}
 				}
 			}
+
+			//Add an extra centre of rotation that is just the centre of the
+			//edge allowing it to rotate around itself.
+			Point mid = g.getNode(f1.node1).midPointTo(g.getNode(f1.node2));
+			votes.add(new Vote(mid.x(), mid.y(), 1,f1.node1, f1.node2,f1.node1,f1.node2));
+
+
 		}
 
 		List<Point> axis = findMaxima(votes);
