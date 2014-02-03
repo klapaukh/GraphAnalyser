@@ -379,14 +379,16 @@ public class Image {
 
 			int x1 = 0, x2 = (int) xint, y1 = (int) yint, y2 = 0;
 
-			if (xint == Double.NaN) {
+			if (p.x() == 90 || p.x() == 270 ) {
 				// Horizontal Line
 				x1 = 0;
 				x2 = 1920;
-				y2 = y1;
-			} else if (yint == Double.NaN) {
+				y2 = (int) p.y();
+				y1 = (int) p.y();
+			} else if (p.x() == 0 || p.x() == 180) {
 				// Vertical line
-				x1 = x2;
+				x2 = (int) p.y();
+				x1 = (int) p.y();
 				y1 = 0;
 				y2 = 1080;
 			} else if (Double.compare(yint, miny) > 0 && Double.compare(xint, minx) > 0) {
