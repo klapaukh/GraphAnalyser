@@ -52,9 +52,13 @@ public class TranslationalSymmetry extends Symmetry {
 					double d = distanceFactor(f1, f2);
 
 					//Is this right?
-					double dx = Math.abs(f1.p.x() - f2.p.x());
-					double dy = Math.abs(f1.p.y() - f2.p.y());
+					double dx = f1.p.x() - f2.p.x();
+					double dy = f1.p.y() - f2.p.y();
 
+					if(dy < 0){
+						dx *= -1;
+						dy *= -1;
+					}
 					double vote = phi * s * d;
 
 					votes.add(new Vote(dx, dy, vote,
